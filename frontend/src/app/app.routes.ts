@@ -1,7 +1,7 @@
-/**
- * Name: Deelan Glear R. David
- * Date: 2026-11-12
- * Title: Application route definitions
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 12, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
  */
 
 import { Routes } from '@angular/router';
@@ -14,7 +14,7 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    loadComponent: () => import('./features/home/home').then((m) => m.Home),
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: 'books',
@@ -30,6 +30,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFound),
+    loadComponent: () => import('./pages/not-found/not-found.component').then((m) => m.NotFoundComponent),
   },
 ];

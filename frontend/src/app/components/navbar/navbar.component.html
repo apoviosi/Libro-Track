@@ -1,0 +1,31 @@
+<!--
+  Name: Aquino, Edrel P.
+  Date: November 12, 2026
+  Assignment: CSAPPD1 Final Project - LibroTrack
+-->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" routerLink="/home" (click)="close()">
+      <span class="brand-name">LibroTrack</span>
+      <span class="brand-badge">Library Lending Tracker</span>
+    </a>
+    <button
+      class="menu-toggle"
+      type="button"
+      (click)="toggle()"
+      [attr.aria-expanded]="isOpen()"
+      aria-label="Toggle navigation menu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="links" [class.open]="isOpen()">
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="close()">
+        Home
+      </a>
+      <a routerLink="/books" routerLinkActive="active" (click)="close()">Catalog</a>
+      <a routerLink="/books/new" routerLinkActive="active" (click)="close()">Lend Book</a>
+    </div>
+  </div>
+</nav>
