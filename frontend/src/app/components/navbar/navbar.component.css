@@ -1,0 +1,110 @@
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 12, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+.navbar {
+  background-color: var(--ctp-mantle);
+  border-bottom: 1px solid var(--ctp-surface0);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-inner {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  margin: 0 auto;
+  max-width: 72rem;
+  padding: 0.75rem 1rem;
+}
+
+.brand {
+  align-items: baseline;
+  display: flex;
+  gap: 0.625rem;
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.brand-name {
+  color: var(--ctp-mauve);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.brand-badge {
+  color: var(--ctp-subtext0);
+  font-size: 0.75rem;
+}
+
+.menu-toggle {
+  background: transparent;
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem;
+}
+
+.menu-toggle span {
+  background-color: var(--ctp-text);
+  display: block;
+  height: 2px;
+  width: 1.25rem;
+}
+
+.links {
+  align-items: center;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.links a {
+  border-bottom: 2px solid transparent;
+  color: var(--ctp-subtext1);
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+}
+
+.links a:hover {
+  color: var(--ctp-text);
+}
+
+.links a.active {
+  background-color: var(--ctp-surface0);
+  border-bottom: 2px solid var(--ctp-mauve);
+  border-radius: 0.375rem 0.375rem 0 0;
+  color: var(--ctp-mauve);
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .links {
+    background-color: var(--ctp-mantle);
+    border-bottom: 1px solid var(--ctp-surface0);
+    display: none;
+    flex-direction: column;
+    left: 0;
+    padding: 0.5rem 1rem 0.75rem;
+    position: absolute;
+    right: 0;
+    top: 100%;
+  }
+
+  .links.open {
+    display: flex;
+  }
+
+  .links a {
+    width: 100%;
+  }
+}

@@ -1,0 +1,38 @@
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 12, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+:root {
+  --ctp-crust: #11111b;
+  --ctp-mantle: #181825;
+  --ctp-base: #1e1e2e;
+  --ctp-surface0: #313244;
+  --ctp-surface1: #45475a;
+  --ctp-surface2: #585b70;
+  --ctp-overlay0: #6c7086;
+  --ctp-text: #cdd6f4;
+  --ctp-subtext1: #bac2de;
+  --ctp-subtext0: #a6adc8;
+  --ctp-mauve: #cba6f7;
+  --ctp-lavender: #b4befe;
+  --ctp-blue: #89b4fa;
+  --ctp-peach: #fab387;
+  --ctp-green: #a6e3a1;
+  --ctp-red: #f38ba8;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--ctp-base);
+  color: var(--ctp-text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
