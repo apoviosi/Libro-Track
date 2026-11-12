@@ -1,0 +1,96 @@
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 12, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+.hero {
+  border: 1px solid var(--ctp-surface0);
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 2rem;
+}
+
+.eyebrow {
+  color: var(--ctp-subtext0);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  color: var(--ctp-text);
+  font-size: 2rem;
+  line-height: 1.15;
+  margin: 0 0 0.75rem;
+}
+
+.lede {
+  color: var(--ctp-subtext1);
+  margin: 0 0 1.25rem;
+  max-width: 44rem;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn {
+  border-radius: 0.625rem;
+  display: inline-block;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--ctp-mauve);
+  color: var(--ctp-crust);
+}
+
+.btn-ghost {
+  border: 1px solid var(--ctp-surface2);
+  color: var(--ctp-text);
+}
+
+.cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.card {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: transform 160ms ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h2 {
+  color: var(--ctp-lavender);
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+}
+
+.card p {
+  color: var(--ctp-subtext1);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 1.55rem;
+  }
+}
