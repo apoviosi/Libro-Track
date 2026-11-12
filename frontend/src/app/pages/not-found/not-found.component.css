@@ -1,0 +1,49 @@
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 12, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+.missing-wrap {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.missing-card {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 1rem;
+  max-width: 30rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.error-tag {
+  color: var(--ctp-red);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.missing-card h1 {
+  color: var(--ctp-text);
+  margin: 0 0 0.75rem;
+}
+
+.description {
+  color: var(--ctp-subtext1);
+  margin: 0 0 1.25rem;
+}
+
+.home-link {
+  background-color: var(--ctp-blue);
+  border-radius: 0.625rem;
+  color: var(--ctp-crust);
+  display: inline-block;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  text-decoration: none;
+}
