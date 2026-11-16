@@ -1,0 +1,80 @@
+<!--
+  Name: Deelan Glear R. David
+  Date: 2026-11-16
+  Title: Reactive create/edit book form template
+-->
+<section>
+  <h1>{{ isEditMode() ? 'Edit Book' : 'Add Book' }}</h1>
+
+  @if (isLoading()) {
+    <p>Loading book…</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div>
+        <label for="title">Title</label>
+        <input id="title" type="text" formControlName="title" autocomplete="off" />
+        @if (form.controls.title.touched && form.controls.title.invalid) {
+          <p role="alert">Title is required.</p>
+        }
+      </div>
+
+      <div>
+        <label for="author">Author</label>
+        <input id="author" type="text" formControlName="author" autocomplete="off" />
+        @if (form.controls.author.touched && form.controls.author.invalid) {
+          <p role="alert">Author is required.</p>
+        }
+      </div>
+
+      <div>
+        <label for="isbn">ISBN</label>
+        <input id="isbn" type="text" formControlName="isbn" autocomplete="off" />
+        @if (form.controls.isbn.touched && form.controls.isbn.invalid) {
+          <p role="alert">ISBN is required.</p>
+        }
+      </div>
+
+      <div>
+        <label for="status">Status</label>
+        <select id="status" formControlName="status">
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      @if (status() !== 'available') {
+        <div>
+          <label for="borrower">Borrower</label>
+          <input id="borrower" type="text" formControlName="borrower" autocomplete="off" />
+          @if (form.controls.borrower.touched && form.controls.borrower.invalid) {
+            <p role="alert">Borrower is required for borrowed or overdue books.</p>
+          }
+        </div>
+
+        <div>
+          <label for="dueDate">Due date</label>
+          <input id="dueDate" type="date" formControlName="dueDate" />
+          @if (form.controls.dueDate.touched && form.controls.dueDate.invalid) {
+            <p role="alert">Due date is required for borrowed or overdue books.</p>
+          }
+        </div>
+      }
+
+      @if (errorMessage()) {
+        <p role="alert">{{ errorMessage() }}</p>
+      }
+
+      @if (successMessage()) {
+        <p role="status">{{ successMessage() }}</p>
+      }
+
+      <div>
+        <button type="submit" [disabled]="isSaving()">
+          {{ isSaving() ? 'Saving…' : isEditMode() ? 'Update Book' : 'Create Book' }}
+        </button>
+        <a routerLink="/books">Cancel</a>
+      </div>
+    </form>
+  }
+</section>
