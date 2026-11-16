@@ -102,22 +102,6 @@ const books = [
     status: 'borrowed',
     borrower: 'Sofia Garcia',
     dueDate: daysFromNow(3)
-  },
-  {
-    title: 'The Catcher in the Rye',
-    author: 'J.D. Salinger',
-    isbn: '978-0316769488',
-    status: 'available',
-    borrower: '',
-    dueDate: null
-  },
-  {
-    title: 'Thinking, Fast and Slow',
-    author: 'Daniel Kahneman',
-    isbn: '978-0374533557',
-    status: 'overdue',
-    borrower: 'Noah Villanueva',
-    dueDate: daysFromNow(-20)
   }
 ];
 
