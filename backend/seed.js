@@ -1,5 +1,17 @@
+const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env'), quiet: true });
+const dotenv = require('dotenv');
+
+const backendEnvPath = path.join(__dirname, '.env');
+const rootEnvPath = path.join(__dirname, '..', '.env');
+
+dotenv.config({ path: backendEnvPath, quiet: true });
+
+// Fall back to the repository root .env when backend/.env is missing
+// or does not provide the variables the app needs.
+if (!process.env.MONGODB_URI && fs.existsSync(rootEnvPath)) {
+  dotenv.config({ path: rootEnvPath, quiet: true });
+}
 
 const mongoose = require('mongoose');
 const Book = require('./models/Book');
