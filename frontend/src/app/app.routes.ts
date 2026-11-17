@@ -1,6 +1,6 @@
 /**
  * Name: Deelan Glear R. David
- * Date: 2026-11-16
+ * Date: 2026-11-18
  * Title: Application routes (book detail and CRUD form routes)
  *
  * Originally scaffolded by Aquino, Edrel P. (2026-11-12).
@@ -35,7 +35,7 @@ export const routes: Routes = [
   {
     path: 'books/:id',
     loadComponent: () =>
-      import('./features/books/book-detail/book-detail').then((m) => m.BookDetailPlaceholder),
+      import('./features/books/book-detail/book-detail').then((m) => m.BookDetailComponent),
   },
   {
     path: '**',

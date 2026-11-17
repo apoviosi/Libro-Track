@@ -1,6 +1,6 @@
 /**
  * Name: Deelan Glear R. David
- * Date: 2026-11-16
+ * Date: 2026-11-18
  * Title: Book detail route placeholder component
  */
 
@@ -19,6 +19,6 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
 })
-export class BookDetailPlaceholder {
+export class BookDetailComponent {
   readonly id = input<string>();
 }
