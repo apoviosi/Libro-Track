@@ -1,16 +1,32 @@
 /**
  * Name: Deelan Glear R. David
- * Date: 2026-11-16
+ * Date: 2026-11-18
  * Title: Reactive create/edit book form component
  */
 
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Book, BookStatus } from '../../../core/models/book.model';
 import { BookPayload, BookService } from '../../../core/services/book.service';
+
+const nonWhitespaceValidator = (control: AbstractControl): ValidationErrors | null => {
+  const value: unknown = control.value;
+
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  return value.trim().length > 0 ? null : { whitespace: true };
+};
 
 @Component({
   selector: 'app-book-form',
@@ -31,29 +47,29 @@ export class BookFormComponent implements OnInit {
   ];
 
   protected readonly form = this.fb.nonNullable.group({
-    title: ['', Validators.required],
-    author: ['', Validators.required],
-    isbn: ['', Validators.required],
+    title: ['', [Validators.required, nonWhitespaceValidator]],
+    author: ['', [Validators.required, nonWhitespaceValidator]],
+    isbn: ['', [Validators.required, nonWhitespaceValidator]],
     status: this.fb.nonNullable.control<BookStatus>('available', Validators.required),
     borrower: [''],
     dueDate: [''],
   });
 
-  protected readonly status = toSignal(this.form.controls.status.valueChanges, {
-    initialValue: this.form.controls.status.value,
-  });
-
+  protected readonly status = signal<BookStatus>(this.form.controls.status.value);
   protected readonly bookId = signal<string | null>(null);
   protected readonly isLoading = signal(false);
+  protected readonly loadFailed = signal(false);
   protected readonly isSaving = signal(false);
   protected readonly errorMessage = signal('');
-  protected readonly successMessage = signal('');
   protected readonly isEditMode = computed(() => this.bookId() !== null);
 
   constructor() {
     this.form.controls.status.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((status) => this.applyLoanValidators(status));
+      .subscribe((status: BookStatus) => {
+        this.status.set(status);
+        this.applyLoanValidators(status);
+      });
 
     this.applyLoanValidators(this.form.controls.status.value);
   }
@@ -81,18 +97,23 @@ export class BookFormComponent implements OnInit {
             borrower: book.borrower ?? '',
             dueDate: this.toDateInputValue(book.dueDate),
           });
+          this.loadFailed.set(false);
           this.isLoading.set(false);
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
+          this.loadFailed.set(true);
           this.errorMessage.set(this.describeError(error));
         },
       });
   }
 
   protected submit(): void {
+    if (this.isLoading() || this.loadFailed()) {
+      return;
+    }
+
     this.errorMessage.set('');
-    this.successMessage.set('');
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -120,7 +141,6 @@ export class BookFormComponent implements OnInit {
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isSaving.set(false);
-        this.successMessage.set(id ? 'Book updated successfully.' : 'Book created successfully.');
         void this.router.navigate(['/books']);
       },
       error: (error: unknown) => {
@@ -158,7 +178,11 @@ export class BookFormComponent implements OnInit {
       return '';
     }
 
-    return date.toISOString().slice(0, 10);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 
   private describeError(error: unknown): string {
