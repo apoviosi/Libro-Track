@@ -154,12 +154,6 @@
         </div>
       }
 
-      @if (successMessage()) {
-        <div class="banner banner-success" role="status">
-          <p>{{ successMessage() }}</p>
-        </div>
-      }
-
       <div class="form-actions">
         <button class="btn btn-primary" type="submit" [disabled]="isSaving()">
           {{ isSaving() ? 'Saving…' : isEditMode() ? 'Update Book' : 'Create Book' }}

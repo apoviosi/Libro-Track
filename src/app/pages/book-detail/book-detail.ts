@@ -20,7 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
 import { Book } from '../../models/book.model';
-import { BookService } from '../../services/book.service';
+import { BookService, DeleteBookResponse } from '../../services/book.service';
 
 @Component({
   selector: 'app-book-detail',
@@ -86,9 +86,9 @@ export class BookDetail {
       .deleteBook(deletedId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (response: DeleteBookResponse) => {
           this.isDeleting.set(false);
-          void this.router.navigate(['/books']);
+          void this.router.navigate(['/books'], { state: { feedback: response.message } });
         },
         error: (error: unknown) => {
           this.isDeleting.set(false);

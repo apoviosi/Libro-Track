@@ -8,7 +8,7 @@ import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
 import { Book } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
@@ -21,6 +21,7 @@ import { BookService, DeleteBookResponse } from '../../services/book.service';
 })
 export class BookList {
   private readonly bookService = inject(BookService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly books = signal<Book[]>([]);
@@ -42,6 +43,7 @@ export class BookList {
   });
 
   constructor() {
+    this.successMessage.set(this.readNavigationFeedback());
     this.loadBooks();
   }
 
@@ -119,6 +121,12 @@ export class BookList {
           this.errorMessage.set(this.describeError(error));
         },
       });
+  }
+
+  private readNavigationFeedback(): string {
+    const feedback: unknown = this.router.getCurrentNavigation()?.extras?.state?.['feedback'];
+
+    return typeof feedback === 'string' ? feedback : '';
   }
 
   private describeError(error: unknown): string {
