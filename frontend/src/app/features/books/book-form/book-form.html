@@ -1,0 +1,141 @@
+<!--
+  Name: Deelan Glear R. David
+  Date: 2026-11-18
+  Title: Reactive create/edit book form template
+-->
+<section>
+  <h1>{{ isEditMode() ? 'Edit Book' : 'Add Book' }}</h1>
+
+  @if (isLoading()) {
+    <p>Loading book…</p>
+  } @else if (loadFailed()) {
+    <p role="alert">{{ errorMessage() }}</p>
+    <a routerLink="/books">Back to books</a>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div>
+        <label for="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          autocomplete="off"
+          [attr.aria-invalid]="
+            form.controls.title.touched && form.controls.title.invalid ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            form.controls.title.touched && form.controls.title.invalid ? 'title-error' : null
+          "
+        />
+        @if (form.controls.title.touched && form.controls.title.invalid) {
+          <p id="title-error" role="alert">Title is required and cannot be blank.</p>
+        }
+      </div>
+
+      <div>
+        <label for="author">Author</label>
+        <input
+          id="author"
+          type="text"
+          formControlName="author"
+          autocomplete="off"
+          [attr.aria-invalid]="
+            form.controls.author.touched && form.controls.author.invalid ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            form.controls.author.touched && form.controls.author.invalid ? 'author-error' : null
+          "
+        />
+        @if (form.controls.author.touched && form.controls.author.invalid) {
+          <p id="author-error" role="alert">Author is required and cannot be blank.</p>
+        }
+      </div>
+
+      <div>
+        <label for="isbn">ISBN</label>
+        <input
+          id="isbn"
+          type="text"
+          formControlName="isbn"
+          autocomplete="off"
+          [attr.aria-invalid]="
+            form.controls.isbn.touched && form.controls.isbn.invalid ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            form.controls.isbn.touched && form.controls.isbn.invalid ? 'isbn-error' : null
+          "
+        />
+        @if (form.controls.isbn.touched && form.controls.isbn.invalid) {
+          <p id="isbn-error" role="alert">ISBN is required and cannot be blank.</p>
+        }
+      </div>
+
+      <div>
+        <label for="status">Status</label>
+        <select id="status" formControlName="status">
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      @if (status() !== 'available') {
+        <div>
+          <label for="borrower">Borrower</label>
+          <input
+            id="borrower"
+            type="text"
+            formControlName="borrower"
+            autocomplete="off"
+            [attr.aria-invalid]="
+              form.controls.borrower.touched && form.controls.borrower.invalid ? 'true' : null
+            "
+            [attr.aria-describedby]="
+              form.controls.borrower.touched && form.controls.borrower.invalid
+                ? 'borrower-error'
+                : null
+            "
+          />
+          @if (form.controls.borrower.touched && form.controls.borrower.invalid) {
+            <p id="borrower-error" role="alert">
+              Borrower is required for borrowed or overdue books.
+            </p>
+          }
+        </div>
+
+        <div>
+          <label for="dueDate">Due date</label>
+          <input
+            id="dueDate"
+            type="date"
+            formControlName="dueDate"
+            [attr.aria-invalid]="
+              form.controls.dueDate.touched && form.controls.dueDate.invalid ? 'true' : null
+            "
+            [attr.aria-describedby]="
+              form.controls.dueDate.touched && form.controls.dueDate.invalid
+                ? 'due-date-error'
+                : null
+            "
+          />
+          @if (form.controls.dueDate.touched && form.controls.dueDate.invalid) {
+            <p id="due-date-error" role="alert">
+              Due date is required for borrowed or overdue books.
+            </p>
+          }
+        </div>
+      }
+
+      @if (errorMessage()) {
+        <p role="alert">{{ errorMessage() }}</p>
+      }
+
+      <div>
+        <button type="submit" [disabled]="isSaving()">
+          {{ isSaving() ? 'Saving…' : isEditMode() ? 'Update Book' : 'Create Book' }}
+        </button>
+        <a routerLink="/books">Cancel</a>
+      </div>
+    </form>
+  }
+</section>

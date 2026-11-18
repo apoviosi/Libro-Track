@@ -1,16 +1,18 @@
 /**
  * Name: Deelan Glear R. David
- * Date: 2026-11-12
+ * Date: 2026-11-18
  * Title: Root application component tests
  */
 
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
