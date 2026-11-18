@@ -9,9 +9,9 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
-import { environment } from '../../../../environments/environment';
-import { Book } from '../../../core/models/book.model';
-import { BookFormComponent } from './book-form';
+import { environment } from '../../../environments/environment';
+import { Book } from '../../models/book.model';
+import { BookForm } from './book-form';
 
 interface BookFormHarness {
   form: FormGroup;
@@ -32,18 +32,18 @@ const existingBook: Book = {
   dueDate: '2026-12-01T00:00:00',
 };
 
-describe('BookFormComponent', () => {
-  let fixture: ComponentFixture<BookFormComponent>;
+describe('BookForm', () => {
+  let fixture: ComponentFixture<BookForm>;
   let component: BookFormHarness;
   let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BookFormComponent],
+      imports: [BookForm],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BookFormComponent);
+    fixture = TestBed.createComponent(BookForm);
     component = fixture.componentInstance as unknown as BookFormHarness;
     httpMock = TestBed.inject(HttpTestingController);
 
@@ -153,14 +153,14 @@ describe('BookFormComponent', () => {
   });
 });
 
-describe('BookFormComponent in edit mode', () => {
-  let fixture: ComponentFixture<BookFormComponent>;
+describe('BookForm in edit mode', () => {
+  let fixture: ComponentFixture<BookForm>;
   let component: BookFormHarness;
   let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BookFormComponent],
+      imports: [BookForm],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -174,7 +174,7 @@ describe('BookFormComponent in edit mode', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BookFormComponent);
+    fixture = TestBed.createComponent(BookForm);
     component = fixture.componentInstance as unknown as BookFormHarness;
     httpMock = TestBed.inject(HttpTestingController);
 

@@ -15,8 +15,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Book, BookStatus } from '../../../core/models/book.model';
-import { BookPayload, BookService } from '../../../core/services/book.service';
+import { Book, BookStatus } from '../../models/book.model';
+import { BookPayload, BookService } from '../../services/book.service';
 
 const nonWhitespaceValidator = (control: AbstractControl): ValidationErrors | null => {
   const value: unknown = control.value;
@@ -33,7 +33,7 @@ const nonWhitespaceValidator = (control: AbstractControl): ValidationErrors | nu
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './book-form.html',
 })
-export class BookFormComponent implements OnInit {
+export class BookForm implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly bookService = inject(BookService);
   private readonly route = inject(ActivatedRoute);
