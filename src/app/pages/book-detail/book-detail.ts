@@ -21,6 +21,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
 import { Book } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
+import { daysOverdue } from '../../utils/due-date';
 
 @Component({
   selector: 'app-book-detail',
@@ -39,8 +40,10 @@ export class BookDetail {
   protected readonly isLoading = signal(true);
   protected readonly loadFailed = signal(false);
   protected readonly errorMessage = signal('');
+  protected readonly successMessage = signal('');
   protected readonly confirmOpen = signal(false);
   protected readonly isDeleting = signal(false);
+  protected readonly isProcessing = signal(false);
 
   protected readonly deletePrompt = computed(() => {
     const book = this.book();
@@ -59,7 +62,17 @@ export class BookDetail {
     });
   }
 
+  protected overdueLabel(book: Book): string {
+    const days = daysOverdue(book.dueDate) ?? 1;
+
+    return `${days} ${days === 1 ? 'day' : 'days'} overdue`;
+  }
+
   protected openDeleteDialog(): void {
+    if (this.isDeleting() || this.isProcessing()) {
+      return;
+    }
+
     this.confirmOpen.set(true);
   }
 
@@ -69,6 +82,35 @@ export class BookDetail {
     }
 
     this.confirmOpen.set(false);
+  }
+
+  protected markReturned(): void {
+    const book = this.book();
+
+    if (!book?._id || this.isProcessing() || this.isDeleting()) {
+      return;
+    }
+
+    const bookId = book._id;
+
+    this.isProcessing.set(true);
+    this.successMessage.set('');
+    this.errorMessage.set('');
+
+    this.bookService
+      .updateBook(bookId, { status: 'available', borrower: '', dueDate: null })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated: Book) => {
+          this.isProcessing.set(false);
+          this.book.set(updated);
+          this.successMessage.set(`"${updated.title}" is back on the shelf.`);
+        },
+        error: (error: unknown) => {
+          this.isProcessing.set(false);
+          this.errorMessage.set(this.describeError(error));
+        },
+      });
   }
 
   protected confirmDelete(): void {
@@ -88,7 +130,9 @@ export class BookDetail {
       .subscribe({
         next: (response: DeleteBookResponse) => {
           this.isDeleting.set(false);
-          void this.router.navigate(['/books'], { state: { feedback: response.message } });
+          void this.router.navigate(['/catalog'], {
+            state: { feedback: response.message },
+          });
         },
         error: (error: unknown) => {
           this.isDeleting.set(false);

@@ -5,7 +5,7 @@
 -->
 <section class="detail-page">
   <header class="detail-header">
-    <a class="back-link" routerLink="/books">← Back to Catalog</a>
+    <a class="back-link" routerLink="/catalog">← Back to Catalog</a>
   </header>
 
   @if (isLoading()) {
@@ -13,7 +13,7 @@
   } @else if (loadFailed()) {
     <div class="banner banner-error" role="alert">
       <p>{{ errorMessage() }}</p>
-      <a class="btn btn-ghost" routerLink="/books">Back to Catalog</a>
+      <a class="btn btn-ghost" routerLink="/catalog">Back to Catalog</a>
     </div>
   } @else {
     @if (errorMessage()) {
@@ -24,6 +24,20 @@
           type="button"
           aria-label="Dismiss message"
           (click)="errorMessage.set('')"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="banner banner-success" role="status">
+        <p>{{ successMessage() }}</p>
+        <button
+          class="banner-close"
+          type="button"
+          aria-label="Dismiss message"
+          (click)="successMessage.set('')"
         >
           ×
         </button>
@@ -59,8 +73,13 @@
               </div>
               <div class="field-row">
                 <dt>Due date</dt>
-                <dd [class.due-overdue]="book.status === 'overdue'">
-                  {{ book.dueDate | date: 'MMMM d, y' }}
+                <dd>
+                  <span [class.due-overdue]="book.status === 'overdue'">{{
+                    book.dueDate | date: 'MMMM d, y'
+                  }}</span>
+                  @if (book.status === 'overdue') {
+                    <span class="overdue-note">{{ overdueLabel(book) }}</span>
+                  }
                 </dd>
               </div>
             }
@@ -81,11 +100,28 @@
           </dl>
 
           <div class="detail-actions">
-            <a class="btn btn-primary" [routerLink]="['/books', book._id, 'edit']">Edit Record</a>
+            @if (book.status === 'available') {
+              <a
+                class="btn btn-primary"
+                [routerLink]="['/lend']"
+                [queryParams]="{ bookId: book._id }"
+              >
+                Lend Book
+              </a>
+            } @else {
+              <button
+                class="btn btn-return"
+                type="button"
+                [disabled]="isProcessing()"
+                (click)="markReturned()"
+              >
+                {{ isProcessing() ? 'Marking…' : 'Mark Returned' }}
+              </button>
+            }
+            <a class="btn btn-ghost" [routerLink]="['/books', book._id, 'edit']">Edit Record</a>
             <button class="btn btn-danger" type="button" (click)="openDeleteDialog()">
               Delete Record
             </button>
-            <a class="btn btn-ghost" routerLink="/books">Back to Catalog</a>
           </div>
         </article>
       </div>
