@@ -49,6 +49,151 @@ h2 {
   font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', 'Times New Roman', serif;
 }
 
+.state-note {
+  color: var(--ctp-subtext0);
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  margin: 0;
+  padding: 2rem 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.banner {
+  align-items: center;
+  border: 1px solid;
+  border-radius: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+}
+
+.banner p {
+  margin: 0;
+}
+
+.banner-error {
+  border-color: var(--ctp-red);
+  color: var(--ctp-red);
+}
+
+.banner-success {
+  border-color: var(--ctp-green);
+  color: var(--ctp-green);
+}
+
+.banner-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+}
+
+.btn-return {
+  background-color: var(--ctp-green);
+  color: var(--ctp-crust);
+}
+
+.btn-return:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn {
+  border: none;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  display: inline-block;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--ctp-mauve);
+  color: var(--ctp-crust);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-ghost {
+  background-color: var(--ctp-surface1);
+  color: var(--ctp-text);
+}
+
+.btn-ghost:hover {
+  background-color: var(--ctp-surface2);
+}
+
+.status-badge {
+  border: 1px solid;
+  border-radius: 0.25rem;
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+}
+
+.status-available {
+  border-color: var(--ctp-green);
+  color: var(--ctp-green);
+}
+
+.status-borrowed {
+  border-color: var(--ctp-peach);
+  color: var(--ctp-peach);
+}
+
+.status-overdue {
+  border-color: var(--ctp-red);
+  color: var(--ctp-red);
+}
+
+.due-overdue {
+  color: var(--ctp-red);
+  font-weight: 700;
+}
+
+.overdue-note {
+  color: var(--ctp-red);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  margin-left: 0.5rem;
+  text-transform: uppercase;
+}
+
+.empty-state {
+  background-color: var(--ctp-mantle);
+  border: 1px dashed var(--ctp-surface2);
+  border-radius: 1rem;
+  grid-column: 1 / -1;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.empty-state h2 {
+  color: var(--ctp-lavender);
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem;
+}
+
+.empty-state p {
+  color: var(--ctp-subtext1);
+  margin: 0 0 1.25rem;
+}
+
 ::selection {
   background-color: var(--ctp-surface2);
   color: var(--ctp-text);

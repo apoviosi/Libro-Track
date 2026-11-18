@@ -150,7 +150,7 @@ export class BookForm implements OnInit {
         const feedback = this.isEditMode()
           ? 'Book updated successfully.'
           : 'Book saved successfully.';
-        void this.router.navigate(['/books'], { state: { feedback } });
+        void this.router.navigate(['/catalog'], { state: { feedback } });
       },
       error: (error: unknown) => {
         this.isSaving.set(false);

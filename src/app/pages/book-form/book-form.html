@@ -20,7 +20,7 @@
   } @else if (loadFailed()) {
     <div class="banner banner-error" role="alert">
       <p>{{ errorMessage() }}</p>
-      <a class="btn btn-ghost" routerLink="/books">Back to Catalog</a>
+      <a class="btn btn-ghost" routerLink="/catalog">Back to Catalog</a>
     </div>
   } @else {
     <form class="form-card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
@@ -158,7 +158,7 @@
         <button class="btn btn-primary" type="submit" [disabled]="isSaving()">
           {{ isSaving() ? 'Saving…' : isEditMode() ? 'Update Book' : 'Create Book' }}
         </button>
-        <a class="btn btn-ghost" routerLink="/books">Cancel</a>
+        <a class="btn btn-ghost" routerLink="/catalog">Cancel</a>
       </div>
     </form>
   }
