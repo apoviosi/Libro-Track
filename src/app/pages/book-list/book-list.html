@@ -1,0 +1,198 @@
+<!--
+  Name: Aquino, Edrel P.
+  Date: November 18, 2026
+  Assignment: CSAPPD1 Final Project - LibroTrack
+-->
+<section class="catalog-page">
+  <header class="catalog-header">
+    <div>
+      <h1>Book Catalog</h1>
+      <p class="catalog-subtitle">
+        @if (isLoading()) {
+          Retrieving records from the archive…
+        } @else if (loadFailed()) {
+          Catalog unavailable.
+        } @else {
+          {{ filteredBooks().length }} of {{ books().length }}
+          {{ books().length === 1 ? 'volume' : 'volumes' }} on the shelves
+        }
+      </p>
+    </div>
+    <a class="btn btn-primary" routerLink="/books/new">Add Book</a>
+  </header>
+
+  @if (isLoading()) {
+    <p class="state-note" role="status">Loading catalog…</p>
+  } @else if (loadFailed()) {
+    <div class="banner banner-error" role="alert">
+      <p>{{ errorMessage() }}</p>
+      <button class="btn btn-ghost" type="button" (click)="retryLoad()">Try Again</button>
+    </div>
+  } @else {
+    @if (successMessage()) {
+      <div class="banner banner-success" role="status">
+        <p>{{ successMessage() }}</p>
+        <button
+          class="banner-close"
+          type="button"
+          aria-label="Dismiss message"
+          (click)="dismissFeedback()"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="banner banner-error" role="alert">
+        <p>{{ errorMessage() }}</p>
+        <button
+          class="banner-close"
+          type="button"
+          aria-label="Dismiss message"
+          (click)="dismissFeedback()"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    <div class="catalog-toolbar">
+      <input
+        class="toolbar-search"
+        type="search"
+        placeholder="Search title, author, or ISBN"
+        aria-label="Search the catalog"
+        autocomplete="off"
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+      />
+      <div class="status-pills" role="group" aria-label="Filter by loan status">
+        <button
+          type="button"
+          class="pill"
+          [class.pill-active]="activeStatus() === 'all'"
+          (click)="onStatusFilter('all')"
+        >
+          All <span class="pill-count">{{ statusCounts().all }}</span>
+        </button>
+        <button
+          type="button"
+          class="pill pill-available"
+          [class.pill-active]="activeStatus() === 'available'"
+          (click)="onStatusFilter('available')"
+        >
+          Available <span class="pill-count">{{ statusCounts().available }}</span>
+        </button>
+        <button
+          type="button"
+          class="pill pill-borrowed"
+          [class.pill-active]="activeStatus() === 'borrowed'"
+          (click)="onStatusFilter('borrowed')"
+        >
+          Borrowed <span class="pill-count">{{ statusCounts().borrowed }}</span>
+        </button>
+        <button
+          type="button"
+          class="pill pill-overdue"
+          [class.pill-active]="activeStatus() === 'overdue'"
+          (click)="onStatusFilter('overdue')"
+        >
+          Overdue <span class="pill-count">{{ statusCounts().overdue }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="book-grid">
+      @for (book of filteredBooks(); track book._id) {
+        <article class="book-card">
+          <div class="book-card-head">
+            <span
+              class="status-badge"
+              [class.status-available]="book.status === 'available'"
+              [class.status-borrowed]="book.status === 'borrowed'"
+              [class.status-overdue]="book.status === 'overdue'"
+            >
+              {{ book.status }}
+            </span>
+          </div>
+          <h2 class="book-title" [title]="book.title">{{ book.title }}</h2>
+          <p class="book-author">{{ book.author }}</p>
+          <p class="book-isbn">ISBN {{ book.isbn }}</p>
+
+          <div class="loan-meta">
+            @if (book.status !== 'available') {
+              <p><span class="meta-label">Borrower</span>{{ book.borrower }}</p>
+              <p>
+                <span class="meta-label">Due</span>
+                <span [class.due-overdue]="book.status === 'overdue'">{{
+                  book.dueDate | date: 'MMM d, y'
+                }}</span>
+                @if (book.status === 'overdue') {
+                  <span class="overdue-note">{{ overdueLabel(book) }}</span>
+                }
+              </p>
+            } @else {
+              <p class="meta-ready">Ready for checkout</p>
+              <p class="meta-ready meta-ready-sub">No active loan</p>
+            }
+          </div>
+
+          <div class="book-footer">
+            @if (book.status === 'available') {
+              <a
+                class="btn btn-primary btn-action"
+                [routerLink]="['/lend']"
+                [queryParams]="{ bookId: book._id }"
+              >
+                Lend
+              </a>
+            } @else {
+              <button
+                class="btn btn-return btn-action"
+                type="button"
+                [disabled]="isProcessingId() === book._id"
+                (click)="returnBook(book)"
+              >
+                {{ isProcessingId() === book._id ? 'Returning…' : 'Return' }}
+              </button>
+            }
+            <div class="book-actions">
+              <a class="btn" [routerLink]="['/books', book._id]">View</a>
+              <a class="btn" [routerLink]="['/books', book._id, 'edit']">Edit</a>
+              <button class="btn btn-danger-quiet" type="button" (click)="requestDelete(book)">
+                Delete
+              </button>
+            </div>
+          </div>
+        </article>
+      } @empty {
+        @if (hasAnyBooks()) {
+          <div class="empty-state">
+            <h2>No matches on the shelf</h2>
+            <p>No books match the current search and status filter.</p>
+            <button class="btn btn-primary" type="button" (click)="clearFilters()">
+              Clear Search &amp; Filters
+            </button>
+          </div>
+        } @else {
+          <div class="empty-state">
+            <h2>The shelves are empty</h2>
+            <p>No books have been added to the catalog yet.</p>
+            <a class="btn btn-primary" routerLink="/books/new">Add Your First Book</a>
+          </div>
+        }
+      }
+    </div>
+  }
+</section>
+
+<app-confirm-dialog
+  [open]="bookToDelete() !== null"
+  [busy]="isDeleting()"
+  [heading]="'Delete this book?'"
+  [message]="deletePrompt()"
+  confirmLabel="Delete Record"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+/>

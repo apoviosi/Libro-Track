@@ -1,6 +1,6 @@
 <!--
   Name: Aquino, Edrel P.
-  Date: November 12, 2026
+  Date: November 18, 2026
   Assignment: CSAPPD1 Final Project - LibroTrack
 -->
 <nav class="navbar">
@@ -21,11 +21,17 @@
       <span></span>
     </button>
     <div class="links" [class.open]="isOpen()">
-      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="close()">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="close()"
+      >
         Home
       </a>
-      <a routerLink="/books" routerLinkActive="active" (click)="close()">Catalog</a>
-      <a routerLink="/books/new" routerLinkActive="active" (click)="close()">Lend Book</a>
+      <a routerLink="/catalog" routerLinkActive="active" (click)="close()">Catalog</a>
+      <a routerLink="/books/new" routerLinkActive="active" (click)="close()">Add Book</a>
+      <a routerLink="/lend" routerLinkActive="active" (click)="close()">Lend Book</a>
     </div>
   </div>
 </nav>
