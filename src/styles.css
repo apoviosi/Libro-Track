@@ -44,6 +44,11 @@ body {
   min-height: 100vh;
 }
 
+h1,
+h2 {
+  font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', 'Times New Roman', serif;
+}
+
 ::selection {
   background-color: var(--ctp-surface2);
   color: var(--ctp-text);

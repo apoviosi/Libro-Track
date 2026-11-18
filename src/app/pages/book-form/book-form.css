@@ -11,6 +11,7 @@
 
 .form-header h1 {
   color: var(--ctp-text);
+  font-size: 1.7rem;
   margin: 0;
 }
 
@@ -20,10 +21,14 @@
 }
 
 .state-note {
-  color: var(--ctp-subtext1);
+  color: var(--ctp-subtext0);
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
   margin: 0;
   padding: 2rem 0;
   text-align: center;
+  text-transform: uppercase;
 }
 
 .form-card {
@@ -70,6 +75,11 @@
 
 .form-input[aria-invalid='true'] {
   border-color: var(--ctp-red);
+}
+
+.mono-input {
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, 'Courier New', monospace;
+  font-size: 0.92rem;
 }
 
 .field-error {
