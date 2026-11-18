@@ -1,0 +1,27 @@
+<!--
+  Name: Aquino, Edrel P.
+  Date: November 18, 2026
+  Assignment: CSAPPD1 Final Project - LibroTrack
+-->
+@if (open()) {
+  <div class="dialog-backdrop" (click)="cancelled.emit()">
+    <div
+      class="dialog-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-dialog-heading"
+      (click)="$event.stopPropagation()"
+    >
+      <h2 id="confirm-dialog-heading">{{ heading() }}</h2>
+      <p class="dialog-message">{{ message() }}</p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" autofocus (click)="cancelled.emit()">
+          {{ cancelLabel() }}
+        </button>
+        <button type="button" class="btn btn-danger" [disabled]="busy()" (click)="confirmed.emit()">
+          {{ busy() ? 'Working…' : confirmLabel() }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,121 @@
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 18, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+.detail-page {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.back-link {
+  color: var(--ctp-subtext1);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--ctp-text);
+}
+
+.detail-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.detail-card {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ctp-crust) 55%, transparent);
+  max-width: 34rem;
+  padding: 2rem;
+  width: 100%;
+}
+
+.detail-card-head {
+  display: flex;
+  justify-content: center;
+  min-height: 1.75rem;
+}
+
+.detail-title {
+  color: var(--ctp-text);
+  font-size: 1.8rem;
+  margin: 0.75rem 0 0.25rem;
+  text-align: center;
+}
+
+.detail-author {
+  color: var(--ctp-subtext1);
+  font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif;
+  font-style: italic;
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+.detail-fields {
+  margin: 0 0 1.75rem;
+}
+
+.field-row {
+  align-items: baseline;
+  border-bottom: 1px solid var(--ctp-surface1);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 8rem 1fr;
+  padding: 0.6rem 0;
+}
+
+.field-row:last-child {
+  border-bottom: none;
+}
+
+.field-row dt {
+  color: var(--ctp-subtext0);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.field-row dd {
+  color: var(--ctp-text);
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace;
+  font-size: 0.88rem;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.detail-actions .btn-danger {
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: var(--ctp-red);
+}
+
+.detail-actions .btn-danger:hover {
+  background-color: var(--ctp-mantle);
+  border-color: var(--ctp-red);
+}
+
+@media (max-width: 480px) {
+  .detail-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .field-row {
+    gap: 0.15rem;
+    grid-template-columns: 1fr;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+  }
+}
