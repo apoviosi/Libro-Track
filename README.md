@@ -19,8 +19,11 @@ To start the API, run:
 ```bash
 cd backend
 npm install
+cp ../.env.example .env
 npm run dev
 ```
+
+Set the values in `backend/.env` before starting the server.
 
 ## Code scaffolding
 
