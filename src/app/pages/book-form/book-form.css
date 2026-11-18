@@ -1,0 +1,152 @@
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 18, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+.form-page {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.form-header h1 {
+  color: var(--ctp-text);
+  font-size: 1.7rem;
+  margin: 0;
+}
+
+.form-subtitle {
+  color: var(--ctp-subtext0);
+  margin: 0.25rem 0 0;
+}
+
+.state-note {
+  color: var(--ctp-subtext0);
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  margin: 0;
+  padding: 2rem 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.form-card {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ctp-crust) 55%, transparent);
+  display: grid;
+  gap: 1.1rem;
+  margin: 0 auto;
+  max-width: 34rem;
+  padding: 1.75rem;
+  width: 100%;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field label {
+  color: var(--ctp-subtext1);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.req-mark {
+  color: var(--ctp-red);
+}
+
+.form-input {
+  background-color: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 0.625rem;
+  color: var(--ctp-text);
+  font: inherit;
+  padding: 0.6rem 0.75rem;
+  width: 100%;
+}
+
+.form-input:focus {
+  border-color: var(--ctp-lavender);
+}
+
+.form-input[aria-invalid='true'] {
+  border-color: var(--ctp-red);
+}
+
+.mono-input {
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, 'Courier New', monospace;
+  font-size: 0.92rem;
+}
+
+.field-error {
+  color: var(--ctp-red);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.banner {
+  align-items: center;
+  border: 1px solid;
+  border-radius: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+}
+
+.banner p {
+  margin: 0;
+}
+
+.banner-error {
+  border-color: var(--ctp-red);
+  color: var(--ctp-red);
+}
+
+.banner-success {
+  border-color: var(--ctp-green);
+  color: var(--ctp-green);
+}
+
+.form-actions {
+  border-top: 1px solid var(--ctp-surface1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 1.1rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  display: inline-block;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--ctp-mauve);
+  color: var(--ctp-crust);
+}
+
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-ghost {
+  background-color: var(--ctp-surface1);
+  color: var(--ctp-text);
+}
+
+.btn-ghost:hover {
+  background-color: var(--ctp-surface2);
+}

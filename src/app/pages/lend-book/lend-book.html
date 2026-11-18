@@ -1,0 +1,127 @@
+<!--
+  Name: Aquino, Edrel P.
+  Date: November 18, 2026
+  Assignment: CSAPPD1 Final Project - LibroTrack
+-->
+<section class="form-page">
+  <header class="form-header">
+    <h1>Lend Book</h1>
+    <p class="form-subtitle">Check out an available volume to a borrower.</p>
+  </header>
+
+  @if (isLoading()) {
+    <p class="state-note" role="status">Loading catalog…</p>
+  } @else if (loadFailed()) {
+    <div class="banner banner-error" role="alert">
+      <p>{{ errorMessage() }}</p>
+      <a class="btn btn-ghost" routerLink="/catalog">Back to Catalog</a>
+    </div>
+  } @else if (availableBooks().length === 0) {
+    <div class="empty-state">
+      <h2>Nothing on the shelf</h2>
+      <p>Every indexed volume is currently lent out. Add a book to the catalog first.</p>
+      <a class="btn btn-primary" routerLink="/books/new">Add Book</a>
+    </div>
+  } @else {
+    <form class="form-card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="book-search">Find a book</label>
+        <input
+          id="book-search"
+          class="form-input mono-input"
+          type="search"
+          placeholder="Title, author, or ISBN"
+          autocomplete="off"
+          [value]="searchQuery()"
+          (input)="onSearch($event)"
+        />
+      </div>
+
+      <div class="field">
+        <label for="book-selection">Book <span class="req-mark" aria-hidden="true">*</span></label>
+        <select
+          id="book-selection"
+          class="form-input"
+          [value]="selectedBookId() ?? ''"
+          (change)="onSelect($event)"
+        >
+          <option value="" disabled [selected]="selectedBookId() === null">
+            Select a book to lend…
+          </option>
+          @for (book of bookMatches(); track book._id) {
+            <option [value]="book._id ?? ''">
+              {{ book.title }} — {{ book.author }} · ISBN {{ book.isbn }}
+            </option>
+          }
+        </select>
+        @if (selectedBook(); as book) {
+          <p class="selection-note">Lending "{{ book.title }}" · ISBN {{ book.isbn }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="borrower"
+          >Borrower name <span class="req-mark" aria-hidden="true">*</span></label
+        >
+        <input
+          id="borrower"
+          class="form-input"
+          type="text"
+          formControlName="borrower"
+          autocomplete="name"
+          [attr.aria-invalid]="
+            form.controls.borrower.touched && form.controls.borrower.invalid ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            form.controls.borrower.touched && form.controls.borrower.invalid
+              ? 'borrower-error'
+              : null
+          "
+        />
+        @if (form.controls.borrower.touched && form.controls.borrower.invalid) {
+          <p id="borrower-error" class="field-error" role="alert">
+            Borrower name is required and cannot be blank.
+          </p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="dueDate">Due date <span class="req-mark" aria-hidden="true">*</span></label>
+        <div class="due-quick">
+          <button type="button" class="chip" (click)="setDueInDays(7)">7 days</button>
+          <button type="button" class="chip" (click)="setDueInDays(14)">14 days</button>
+        </div>
+        <input
+          id="dueDate"
+          class="form-input mono-input"
+          type="date"
+          formControlName="dueDate"
+          [attr.aria-invalid]="
+            form.controls.dueDate.touched && form.controls.dueDate.invalid ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            form.controls.dueDate.touched && form.controls.dueDate.invalid ? 'due-date-error' : null
+          "
+        />
+        @if (form.controls.dueDate.touched && form.controls.dueDate.invalid) {
+          <p id="due-date-error" class="field-error" role="alert">
+            Due date is required to record a loan.
+          </p>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <div class="banner banner-error" role="alert">
+          <p>{{ errorMessage() }}</p>
+        </div>
+      }
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="isSaving() || !selectedBookId()">
+          {{ isSaving() ? 'Recording…' : 'Record Loan' }}
+        </button>
+        <a class="btn btn-ghost" routerLink="/catalog">Cancel</a>
+      </div>
+    </form>
+  }
+</section>

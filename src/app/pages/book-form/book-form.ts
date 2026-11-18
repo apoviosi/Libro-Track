@@ -1,7 +1,12 @@
-/**
- * Name: Deelan Glear R. David
- * Date: 2026-11-18
- * Title: Reactive create/edit book form component
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 18, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+/*
+ * Reactive form logic originally implemented by Deelan Glear R. David (2026-11-18).
+ * Catppuccin Mocha restyling and instant save feedback by Aquino, Edrel P.
  */
 
 import { HttpErrorResponse } from '@angular/common/http';
@@ -31,6 +36,7 @@ const nonWhitespaceValidator = (control: AbstractControl): ValidationErrors | nu
 @Component({
   selector: 'app-book-form',
   imports: [ReactiveFormsModule, RouterLink],
+  styleUrl: './book-form.css',
   templateUrl: './book-form.html',
 })
 export class BookForm implements OnInit {
@@ -141,7 +147,10 @@ export class BookForm implements OnInit {
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isSaving.set(false);
-        void this.router.navigate(['/books']);
+        const feedback = this.isEditMode()
+          ? 'Book updated successfully.'
+          : 'Book saved successfully.';
+        void this.router.navigate(['/catalog'], { state: { feedback } });
       },
       error: (error: unknown) => {
         this.isSaving.set(false);
