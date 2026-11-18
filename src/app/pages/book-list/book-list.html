@@ -1,0 +1,108 @@
+<!--
+  Name: Aquino, Edrel P.
+  Date: November 18, 2026
+  Assignment: CSAPPD1 Final Project - LibroTrack
+-->
+<section class="catalog-page">
+  <header class="catalog-header">
+    <div>
+      <h1>Book Catalog</h1>
+      <p class="catalog-subtitle">
+        @if (isLoading()) {
+          Retrieving records from the archive…
+        } @else {
+          {{ books().length }} {{ books().length === 1 ? 'volume' : 'volumes' }} currently indexed
+        }
+      </p>
+    </div>
+    <a class="btn btn-primary" routerLink="/books/new">Add Book</a>
+  </header>
+
+  @if (isLoading()) {
+    <p class="state-note" role="status">Loading catalog…</p>
+  } @else if (loadFailed()) {
+    <div class="banner banner-error" role="alert">
+      <p>{{ errorMessage() }}</p>
+      <button class="btn btn-ghost" type="button" (click)="retryLoad()">Try Again</button>
+    </div>
+  } @else {
+    @if (successMessage()) {
+      <div class="banner banner-success" role="status">
+        <p>{{ successMessage() }}</p>
+        <button
+          class="banner-close"
+          type="button"
+          aria-label="Dismiss message"
+          (click)="dismissFeedback()"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="banner banner-error" role="alert">
+        <p>{{ errorMessage() }}</p>
+        <button
+          class="banner-close"
+          type="button"
+          aria-label="Dismiss message"
+          (click)="dismissFeedback()"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    <div class="book-grid">
+      @for (book of books(); track book._id) {
+        <article class="book-card">
+          <div class="book-card-head">
+            <span
+              class="status-badge"
+              [class.status-available]="book.status === 'available'"
+              [class.status-borrowed]="book.status === 'borrowed'"
+              [class.status-overdue]="book.status === 'overdue'"
+            >
+              {{ book.status }}
+            </span>
+          </div>
+          <h2 class="book-title" [title]="book.title">{{ book.title }}</h2>
+          <p class="book-author">{{ book.author }}</p>
+          <p class="book-isbn">ISBN {{ book.isbn }}</p>
+
+          @if (book.status !== 'available') {
+            <div class="loan-meta">
+              <p><span class="meta-label">Borrower</span>{{ book.borrower }}</p>
+              <p><span class="meta-label">Due</span>{{ book.dueDate | date: 'MMM d, y' }}</p>
+            </div>
+          }
+
+          <div class="book-actions">
+            <a class="btn btn-ghost" [routerLink]="['/books', book._id]">View Details</a>
+            <a class="btn btn-ghost" [routerLink]="['/books', book._id, 'edit']">Edit</a>
+            <button class="btn btn-danger" type="button" (click)="requestDelete(book)">
+              Delete
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <h2>The shelves are empty</h2>
+          <p>No books have been added to the catalog yet.</p>
+          <a class="btn btn-primary" routerLink="/books/new">Add Your First Book</a>
+        </div>
+      }
+    </div>
+  }
+</section>
+
+<app-confirm-dialog
+  [open]="bookToDelete() !== null"
+  [busy]="isDeleting()"
+  [heading]="'Delete this book?'"
+  [message]="deletePrompt()"
+  confirmLabel="Delete Record"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+/>

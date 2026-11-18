@@ -1,0 +1,102 @@
+<!--
+  Name: Aquino, Edrel P.
+  Date: November 18, 2026
+  Assignment: CSAPPD1 Final Project - LibroTrack
+-->
+<section class="detail-page">
+  <header class="detail-header">
+    <a class="back-link" routerLink="/books">← Back to Catalog</a>
+  </header>
+
+  @if (isLoading()) {
+    <p class="state-note" role="status">Loading book record…</p>
+  } @else if (loadFailed()) {
+    <div class="banner banner-error" role="alert">
+      <p>{{ errorMessage() }}</p>
+      <a class="btn btn-ghost" routerLink="/books">Back to Catalog</a>
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="banner banner-error" role="alert">
+        <p>{{ errorMessage() }}</p>
+        <button
+          class="banner-close"
+          type="button"
+          aria-label="Dismiss message"
+          (click)="errorMessage.set('')"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    @if (book(); as book) {
+      <div class="detail-wrap">
+        <article class="detail-card">
+          <header class="detail-card-head">
+            <span
+              class="status-badge"
+              [class.status-available]="book.status === 'available'"
+              [class.status-borrowed]="book.status === 'borrowed'"
+              [class.status-overdue]="book.status === 'overdue'"
+            >
+              {{ book.status }}
+            </span>
+          </header>
+          <h1 class="detail-title">{{ book.title }}</h1>
+          <p class="detail-author">by {{ book.author }}</p>
+
+          <dl class="detail-fields">
+            <div class="field-row">
+              <dt>ISBN</dt>
+              <dd>{{ book.isbn }}</dd>
+            </div>
+
+            @if (book.status !== 'available') {
+              <div class="field-row">
+                <dt>Borrower</dt>
+                <dd>{{ book.borrower }}</dd>
+              </div>
+              <div class="field-row">
+                <dt>Due date</dt>
+                <dd>{{ book.dueDate | date: 'MMMM d, y' }}</dd>
+              </div>
+            }
+
+            @if (book.createdAt) {
+              <div class="field-row">
+                <dt>Created</dt>
+                <dd>{{ book.createdAt | date: 'MMM d, y, h:mm a' }}</dd>
+              </div>
+            }
+
+            @if (book.updatedAt) {
+              <div class="field-row">
+                <dt>Last updated</dt>
+                <dd>{{ book.updatedAt | date: 'MMM d, y, h:mm a' }}</dd>
+              </div>
+            }
+          </dl>
+
+          <div class="detail-actions">
+            <a class="btn btn-primary" [routerLink]="['/books', book._id, 'edit']">Edit Record</a>
+            <button class="btn btn-danger" type="button" (click)="openDeleteDialog()">
+              Delete Record
+            </button>
+            <a class="btn btn-ghost" routerLink="/books">Back to Catalog</a>
+          </div>
+        </article>
+      </div>
+    }
+  }
+</section>
+
+<app-confirm-dialog
+  [open]="confirmOpen()"
+  [busy]="isDeleting()"
+  [heading]="'Delete this book?'"
+  [message]="deletePrompt()"
+  confirmLabel="Delete Record"
+  (confirmed)="confirmDelete()"
+  (cancelled)="closeDeleteDialog()"
+/>
