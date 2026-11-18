@@ -19,6 +19,6 @@ import { RouterLink } from '@angular/router';
     </section>
   `,
 })
-export class BookDetailComponent {
+export class BookDetail {
   readonly id = input<string>();
 }

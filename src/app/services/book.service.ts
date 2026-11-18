@@ -7,7 +7,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { Book } from '../models/book.model';
 
 export type BookPayload = Omit<Book, '_id' | 'createdAt' | 'updatedAt'>;
