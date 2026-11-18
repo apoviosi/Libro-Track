@@ -109,17 +109,20 @@
   background-color: var(--ctp-surface0);
   border: 1px solid var(--ctp-surface1);
   border-radius: 1rem;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ctp-crust) 55%, transparent);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   padding: 1.25rem;
   transition:
     border-color 160ms ease,
+    box-shadow 160ms ease,
     transform 160ms ease;
 }
 
 .book-card:hover {
   border-color: var(--ctp-surface2);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--ctp-crust) 65%, transparent);
   transform: translateY(-2px);
 }
 
@@ -193,6 +196,11 @@
   letter-spacing: 0.05em;
   margin-right: 0.5rem;
   text-transform: uppercase;
+}
+
+.due-overdue {
+  color: var(--ctp-red);
+  font-weight: 700;
 }
 
 .book-actions {

@@ -94,6 +94,7 @@
   background-color: var(--ctp-surface0);
   border: 1px solid var(--ctp-surface1);
   border-radius: 1rem;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ctp-crust) 55%, transparent);
   max-width: 34rem;
   padding: 2rem;
   width: 100%;
@@ -172,6 +173,11 @@
   color: var(--ctp-text);
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+.due-overdue {
+  color: var(--ctp-red);
+  font-weight: 700;
 }
 
 .detail-actions {

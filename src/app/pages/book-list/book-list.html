@@ -76,7 +76,12 @@
           @if (book.status !== 'available') {
             <div class="loan-meta">
               <p><span class="meta-label">Borrower</span>{{ book.borrower }}</p>
-              <p><span class="meta-label">Due</span>{{ book.dueDate | date: 'MMM d, y' }}</p>
+              <p>
+                <span class="meta-label">Due</span
+                ><span [class.due-overdue]="book.status === 'overdue'">{{
+                  book.dueDate | date: 'MMM d, y'
+                }}</span>
+              </p>
             </div>
           }
 

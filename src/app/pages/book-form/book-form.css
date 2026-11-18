@@ -30,6 +30,7 @@
   background-color: var(--ctp-surface0);
   border: 1px solid var(--ctp-surface1);
   border-radius: 1rem;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ctp-crust) 55%, transparent);
   display: grid;
   gap: 1.1rem;
   margin: 0 auto;

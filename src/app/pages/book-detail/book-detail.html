@@ -59,7 +59,9 @@
               </div>
               <div class="field-row">
                 <dt>Due date</dt>
-                <dd>{{ book.dueDate | date: 'MMMM d, y' }}</dd>
+                <dd [class.due-overdue]="book.status === 'overdue'">
+                  {{ book.dueDate | date: 'MMMM d, y' }}
+                </dd>
               </div>
             }
 
