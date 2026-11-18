@@ -1,0 +1,70 @@
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 18, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+.dialog-backdrop {
+  align-items: center;
+  background-color: var(--ctp-crust);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 1.5rem;
+  position: fixed;
+  z-index: 200;
+}
+
+.dialog-card {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 1rem;
+  max-width: 24rem;
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.dialog-card h2 {
+  color: var(--ctp-text);
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+.dialog-message {
+  color: var(--ctp-subtext1);
+  margin: 0 0 1.25rem;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.btn {
+  border: none;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+}
+
+.btn-ghost {
+  background-color: var(--ctp-surface1);
+  color: var(--ctp-text);
+}
+
+.btn-ghost:hover {
+  background-color: var(--ctp-surface2);
+}
+
+.btn-danger {
+  background-color: var(--ctp-red);
+  color: var(--ctp-crust);
+}
+
+.btn-danger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
