@@ -11,12 +11,134 @@
   </p>
   <div class="states-line">
     <span class="states-label">Tracked across three states</span>
-    <span class="stamp stamp-available">Available</span>
-    <span class="stamp stamp-borrowed">Borrowed</span>
-    <span class="stamp stamp-overdue">Overdue</span>
+    <span class="status-badge status-available">Available</span>
+    <span class="status-badge status-borrowed">Borrowed</span>
+    <span class="status-badge status-overdue">Overdue</span>
   </div>
   <div class="cta-row">
-    <a class="btn btn-primary" routerLink="/books">Browse Book Catalog</a>
-    <a class="btn btn-ghost" routerLink="/books/new">Record Book Issue</a>
+    <a class="btn btn-primary" routerLink="/catalog">Browse Book Catalog</a>
+    <a class="btn btn-ghost" routerLink="/lend">Lend Book</a>
   </div>
+</section>
+
+<section class="overview">
+  @if (isLoading()) {
+    <p class="state-note" role="status">Loading circulation data…</p>
+  } @else if (loadFailed()) {
+    <div class="banner banner-error" role="alert">
+      <p>{{ errorMessage() }}</p>
+      <button class="btn btn-ghost" type="button" (click)="retryLoad()">Try Again</button>
+    </div>
+  } @else {
+    @if (successMessage()) {
+      <div class="banner banner-success" role="status">
+        <p>{{ successMessage() }}</p>
+        <button
+          class="banner-close"
+          type="button"
+          aria-label="Dismiss message"
+          (click)="dismissFeedback()"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="banner banner-error" role="alert">
+        <p>{{ errorMessage() }}</p>
+        <button
+          class="banner-close"
+          type="button"
+          aria-label="Dismiss message"
+          (click)="dismissFeedback()"
+        >
+          ×
+        </button>
+      </div>
+    }
+
+    <div class="kpi-grid">
+      <a class="kpi kpi-total" routerLink="/catalog">
+        <span class="kpi-value">{{ counts().total }}</span>
+        <span class="kpi-label">Total Volumes</span>
+      </a>
+      <a
+        class="kpi kpi-available"
+        [routerLink]="['/catalog']"
+        [queryParams]="{ status: 'available' }"
+      >
+        <span class="kpi-value">{{ counts().available }}</span>
+        <span class="kpi-label">Available</span>
+      </a>
+      <a
+        class="kpi kpi-borrowed"
+        [routerLink]="['/catalog']"
+        [queryParams]="{ status: 'borrowed' }"
+      >
+        <span class="kpi-value">{{ counts().borrowed }}</span>
+        <span class="kpi-label">Borrowed</span>
+      </a>
+      <a class="kpi kpi-overdue" [routerLink]="['/catalog']" [queryParams]="{ status: 'overdue' }">
+        <span class="kpi-value">{{ counts().overdue }}</span>
+        <span class="kpi-label">Overdue</span>
+      </a>
+    </div>
+
+    <div class="due-panel">
+      <h2>Overdue &amp; Due Soon</h2>
+      @if (dueWatch().overdue.length > 0 || dueWatch().dueSoon.length > 0) {
+        <ul class="due-list">
+          @for (entry of dueWatch().overdue; track entry.book._id) {
+            <li class="due-row">
+              <div class="due-book">
+                <span class="due-title">{{ entry.book.title }}</span>
+                <span class="due-author">{{ entry.book.author }}</span>
+              </div>
+              <span class="due-borrower">{{ entry.book.borrower }}</span>
+              <span class="due-date">Due {{ entry.book.dueDate | date: 'MMM d, y' }}</span>
+              <span class="badge badge-overdue">
+                {{ entry.days }} {{ entry.days === 1 ? 'day' : 'days' }} overdue
+              </span>
+              <button
+                class="btn btn-return"
+                type="button"
+                [disabled]="isProcessingId() === entry.book._id"
+                (click)="markReturned(entry.book)"
+              >
+                {{ isProcessingId() === entry.book._id ? 'Returning…' : 'Mark Returned' }}
+              </button>
+            </li>
+          }
+          @for (entry of dueWatch().dueSoon; track entry.book._id) {
+            <li class="due-row">
+              <div class="due-book">
+                <span class="due-title">{{ entry.book.title }}</span>
+                <span class="due-author">{{ entry.book.author }}</span>
+              </div>
+              <span class="due-borrower">{{ entry.book.borrower }}</span>
+              <span class="due-date">Due {{ entry.book.dueDate | date: 'MMM d, y' }}</span>
+              <span class="badge badge-soon">
+                @if (entry.days === 0) {
+                  Due today
+                } @else {
+                  Due in {{ entry.days }} {{ entry.days === 1 ? 'day' : 'days' }}
+                }
+              </span>
+              <button
+                class="btn btn-return"
+                type="button"
+                [disabled]="isProcessingId() === entry.book._id"
+                (click)="markReturned(entry.book)"
+              >
+                {{ isProcessingId() === entry.book._id ? 'Returning…' : 'Mark Returned' }}
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="due-empty">No overdue or due-soon loans. The circulation desk is clear.</p>
+      }
+    </div>
+  }
 </section>
