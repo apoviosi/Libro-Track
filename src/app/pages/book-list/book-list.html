@@ -13,7 +13,8 @@
         } @else if (loadFailed()) {
           Catalog unavailable.
         } @else {
-          {{ books().length }} {{ books().length === 1 ? 'volume' : 'volumes' }} currently indexed
+          {{ filteredBooks().length }} of {{ books().length }}
+          {{ books().length === 1 ? 'volume' : 'volumes' }} on the shelves
         }
       </p>
     </div>
@@ -56,8 +57,54 @@
       </div>
     }
 
+    <div class="catalog-toolbar">
+      <input
+        class="toolbar-search"
+        type="search"
+        placeholder="Search title, author, or ISBN"
+        aria-label="Search the catalog"
+        autocomplete="off"
+        [value]="searchQuery()"
+        (input)="onSearch($event)"
+      />
+      <div class="status-pills" role="group" aria-label="Filter by loan status">
+        <button
+          type="button"
+          class="pill"
+          [class.pill-active]="activeStatus() === 'all'"
+          (click)="onStatusFilter('all')"
+        >
+          All <span class="pill-count">{{ statusCounts().all }}</span>
+        </button>
+        <button
+          type="button"
+          class="pill pill-available"
+          [class.pill-active]="activeStatus() === 'available'"
+          (click)="onStatusFilter('available')"
+        >
+          Available <span class="pill-count">{{ statusCounts().available }}</span>
+        </button>
+        <button
+          type="button"
+          class="pill pill-borrowed"
+          [class.pill-active]="activeStatus() === 'borrowed'"
+          (click)="onStatusFilter('borrowed')"
+        >
+          Borrowed <span class="pill-count">{{ statusCounts().borrowed }}</span>
+        </button>
+        <button
+          type="button"
+          class="pill pill-overdue"
+          [class.pill-active]="activeStatus() === 'overdue'"
+          (click)="onStatusFilter('overdue')"
+        >
+          Overdue <span class="pill-count">{{ statusCounts().overdue }}</span>
+        </button>
+      </div>
+    </div>
+
     <div class="book-grid">
-      @for (book of books(); track book._id) {
+      @for (book of filteredBooks(); track book._id) {
         <article class="book-card">
           <div class="book-card-head">
             <span
@@ -73,32 +120,68 @@
           <p class="book-author">{{ book.author }}</p>
           <p class="book-isbn">ISBN {{ book.isbn }}</p>
 
-          @if (book.status !== 'available') {
-            <div class="loan-meta">
+          <div class="loan-meta">
+            @if (book.status !== 'available') {
               <p><span class="meta-label">Borrower</span>{{ book.borrower }}</p>
               <p>
-                <span class="meta-label">Due</span
-                ><span [class.due-overdue]="book.status === 'overdue'">{{
+                <span class="meta-label">Due</span>
+                <span [class.due-overdue]="book.status === 'overdue'">{{
                   book.dueDate | date: 'MMM d, y'
                 }}</span>
+                @if (book.status === 'overdue') {
+                  <span class="overdue-note">{{ overdueLabel(book) }}</span>
+                }
               </p>
-            </div>
-          }
+            } @else {
+              <p class="meta-ready">Ready for checkout</p>
+              <p class="meta-ready meta-ready-sub">No active loan</p>
+            }
+          </div>
 
-          <div class="book-actions">
-            <a class="btn btn-ghost" [routerLink]="['/books', book._id]">View Details</a>
-            <a class="btn btn-ghost" [routerLink]="['/books', book._id, 'edit']">Edit</a>
-            <button class="btn btn-danger" type="button" (click)="requestDelete(book)">
-              Delete
-            </button>
+          <div class="book-footer">
+            @if (book.status === 'available') {
+              <a
+                class="btn btn-primary btn-action"
+                [routerLink]="['/lend']"
+                [queryParams]="{ bookId: book._id }"
+              >
+                Lend
+              </a>
+            } @else {
+              <button
+                class="btn btn-return btn-action"
+                type="button"
+                [disabled]="isProcessingId() === book._id"
+                (click)="returnBook(book)"
+              >
+                {{ isProcessingId() === book._id ? 'Returning…' : 'Return' }}
+              </button>
+            }
+            <div class="book-actions">
+              <a class="btn" [routerLink]="['/books', book._id]">View</a>
+              <a class="btn" [routerLink]="['/books', book._id, 'edit']">Edit</a>
+              <button class="btn btn-danger-quiet" type="button" (click)="requestDelete(book)">
+                Delete
+              </button>
+            </div>
           </div>
         </article>
       } @empty {
-        <div class="empty-state">
-          <h2>The shelves are empty</h2>
-          <p>No books have been added to the catalog yet.</p>
-          <a class="btn btn-primary" routerLink="/books/new">Add Your First Book</a>
-        </div>
+        @if (hasAnyBooks()) {
+          <div class="empty-state">
+            <h2>No matches on the shelf</h2>
+            <p>No books match the current search and status filter.</p>
+            <button class="btn btn-primary" type="button" (click)="clearFilters()">
+              Clear Search &amp; Filters
+            </button>
+          </div>
+        } @else {
+          <div class="empty-state">
+            <h2>The shelves are empty</h2>
+            <p>No books have been added to the catalog yet.</p>
+            <a class="btn btn-primary" routerLink="/books/new">Add Your First Book</a>
+          </div>
+        }
       }
     </div>
   }

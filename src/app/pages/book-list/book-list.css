@@ -34,87 +34,77 @@
   text-transform: uppercase;
 }
 
-.state-note {
-  color: var(--ctp-subtext0);
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
-  margin: 0;
-  padding: 2rem 0;
-  text-align: center;
-  text-transform: uppercase;
+.catalog-subtitle,
+.book-isbn,
+.loan-meta p,
+.pill-count {
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace;
 }
 
-.banner {
+.catalog-toolbar {
   align-items: center;
-  border: 1px solid;
-  border-radius: 0.75rem;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
 }
 
-.banner p {
-  margin: 0;
-}
-
-.banner-error {
-  border-color: var(--ctp-red);
-  color: var(--ctp-red);
-}
-
-.banner-success {
-  border-color: var(--ctp-green);
-  color: var(--ctp-green);
-}
-
-.banner-close {
-  background: transparent;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font-size: 1.1rem;
-  line-height: 1;
-  padding: 0.25rem 0.5rem;
-}
-
-.btn {
-  border: none;
+.toolbar-search {
+  background-color: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface1);
   border-radius: 0.625rem;
-  cursor: pointer;
-  display: inline-block;
+  color: var(--ctp-text);
+  flex: 1 1 16rem;
   font: inherit;
-  font-weight: 600;
-  padding: 0.625rem 1rem;
-  text-align: center;
-  text-decoration: none;
+  padding: 0.55rem 0.8rem;
 }
 
-.btn-primary {
-  background-color: var(--ctp-mauve);
-  color: var(--ctp-crust);
+.toolbar-search:focus {
+  border-color: var(--ctp-lavender);
 }
 
-.btn-ghost {
-  background-color: var(--ctp-surface1);
+.status-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.pill {
+  background-color: transparent;
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 0.25rem;
+  color: var(--ctp-subtext1);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.7rem;
+}
+
+.pill:hover {
+  border-color: var(--ctp-surface2);
   color: var(--ctp-text);
 }
 
-.btn-ghost:hover {
-  background-color: var(--ctp-surface2);
+.pill-active {
+  background-color: var(--ctp-surface1);
+  border-color: var(--ctp-lavender);
+  color: var(--ctp-text);
 }
 
-.btn-danger {
-  background-color: var(--ctp-red);
-  color: var(--ctp-crust);
+.pill-available.pill-active {
+  border-color: var(--ctp-green);
 }
 
-.catalog-subtitle,
-.state-note,
-.status-badge,
-.book-isbn,
-.loan-meta p {
-  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace;
+.pill-borrowed.pill-active {
+  border-color: var(--ctp-peach);
+}
+
+.pill-overdue.pill-active {
+  border-color: var(--ctp-red);
+}
+
+.pill-count {
+  font-size: 0.72rem;
 }
 
 .book-grid {
@@ -151,31 +141,6 @@
   min-height: 1.75rem;
 }
 
-.status-badge {
-  border: 1px solid;
-  border-radius: 0.25rem;
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 0.25rem 0.5rem;
-  text-transform: uppercase;
-}
-
-.status-available {
-  border-color: var(--ctp-green);
-  color: var(--ctp-green);
-}
-
-.status-borrowed {
-  border-color: var(--ctp-peach);
-  color: var(--ctp-peach);
-}
-
-.status-overdue {
-  border-color: var(--ctp-red);
-  color: var(--ctp-red);
-}
-
 .book-title {
   color: var(--ctp-text);
   font-size: 1.2rem;
@@ -203,6 +168,8 @@
   border-radius: 0.625rem;
   display: grid;
   gap: 0.3rem;
+  margin-top: auto;
+  min-height: 3.45rem;
   padding: 0.6rem 0.75rem;
 }
 
@@ -219,27 +186,50 @@
   text-transform: uppercase;
 }
 
-.due-overdue {
-  color: var(--ctp-red);
-  font-weight: 700;
+.meta-ready {
+  color: var(--ctp-subtext0);
+}
+
+.meta-ready-sub {
+  color: var(--ctp-overlay0);
+}
+
+.book-footer {
+  align-items: center;
+  border-top: 1px solid var(--ctp-surface1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+}
+
+.btn-action {
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 0.7rem;
+  text-decoration: none;
 }
 
 .book-actions {
-  border-top: 1px solid var(--ctp-surface1);
+  align-items: center;
+  border-left: 1px solid var(--ctp-surface1);
   display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-  margin-top: auto;
-  padding-top: 0.75rem;
+  gap: 0.35rem;
+  padding-left: 0.6rem;
 }
 
 .book-actions .btn {
   background-color: transparent;
   border: 1px solid transparent;
   color: var(--ctp-lavender);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.35rem 0.5rem;
+  padding: 0.3rem 0.45rem;
 }
 
 .book-actions .btn:hover {
@@ -247,31 +237,30 @@
   border-color: var(--ctp-surface1);
 }
 
-.book-actions .btn-danger {
+.book-actions .btn-danger-quiet {
   color: var(--ctp-red);
 }
 
-.book-actions .btn-danger:hover {
-  background-color: var(--ctp-mantle);
+.book-actions .btn-danger-quiet:hover {
   border-color: var(--ctp-red);
 }
 
-.empty-state {
-  background-color: var(--ctp-mantle);
-  border: 1px dashed var(--ctp-surface2);
-  border-radius: 1rem;
-  grid-column: 1 / -1;
-  padding: 3rem 1.5rem;
-  text-align: center;
-}
+@media (max-width: 640px) {
+  .toolbar-search {
+    flex-basis: 100%;
+  }
 
-.empty-state h2 {
-  color: var(--ctp-lavender);
-  font-size: 1.3rem;
-  margin: 0 0 0.5rem;
-}
+  .status-pills {
+    margin-left: 0;
+  }
 
-.empty-state p {
-  color: var(--ctp-subtext1);
-  margin: 0 0 1.25rem;
+  .book-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .book-actions {
+    border-left: none;
+    padding-left: 0;
+  }
 }

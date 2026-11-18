@@ -6,12 +6,18 @@
 
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
-import { Book } from '../../models/book.model';
+import { Book, BookStatus } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
+import { daysOverdue } from '../../utils/due-date';
+
+type StatusFilter = 'all' | BookStatus;
+
+const isBookStatus = (value: string | undefined): value is BookStatus =>
+  value === 'available' || value === 'borrowed' || value === 'overdue';
 
 @Component({
   selector: 'app-book-list',
@@ -22,15 +28,61 @@ import { BookService, DeleteBookResponse } from '../../services/book.service';
 export class BookList {
   private readonly bookService = inject(BookService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+
+  /** Active status filter, bound from the ?status= query parameter. */
+  readonly status = input<string>();
 
   protected readonly books = signal<Book[]>([]);
   protected readonly isLoading = signal(true);
   protected readonly loadFailed = signal(false);
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
+  protected readonly searchQuery = signal('');
   protected readonly bookToDelete = signal<Book | null>(null);
   protected readonly isDeleting = signal(false);
+  protected readonly isProcessingId = signal<string | null>(null);
+
+  protected readonly activeStatus = computed<StatusFilter>(() => {
+    const status = this.status();
+
+    return isBookStatus(status) ? status : 'all';
+  });
+
+  protected readonly statusCounts = computed(() => {
+    const list = this.books();
+
+    return {
+      all: list.length,
+      available: list.filter((book: Book) => book.status === 'available').length,
+      borrowed: list.filter((book: Book) => book.status === 'borrowed').length,
+      overdue: list.filter((book: Book) => book.status === 'overdue').length,
+    };
+  });
+
+  protected readonly filteredBooks = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    const status = this.activeStatus();
+
+    return this.books().filter((book: Book) => {
+      if (status !== 'all' && book.status !== status) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      return (
+        book.title.toLowerCase().includes(query) ||
+        book.author.toLowerCase().includes(query) ||
+        book.isbn.toLowerCase().includes(query)
+      );
+    });
+  });
+
+  protected readonly hasAnyBooks = computed(() => this.books().length > 0);
 
   protected readonly deletePrompt = computed(() => {
     const book = this.bookToDelete();
@@ -47,6 +99,25 @@ export class BookList {
     this.loadBooks();
   }
 
+  protected onSearch(event: Event): void {
+    this.searchQuery.set((event.target as HTMLInputElement).value);
+  }
+
+  protected onStatusFilter(next: StatusFilter): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: next === 'all' ? { status: null } : { status: next },
+    });
+  }
+
+  protected clearFilters(): void {
+    this.searchQuery.set('');
+
+    if (this.activeStatus() !== 'all') {
+      this.onStatusFilter('all');
+    }
+  }
+
   protected retryLoad(): void {
     this.loadBooks();
   }
@@ -56,8 +127,41 @@ export class BookList {
     this.errorMessage.set('');
   }
 
+  protected overdueLabel(book: Book): string {
+    const days = daysOverdue(book.dueDate) ?? 1;
+
+    return `${days} ${days === 1 ? 'day' : 'days'} overdue`;
+  }
+
+  protected returnBook(book: Book): void {
+    if (!book?._id || this.isProcessingId() === book._id) {
+      return;
+    }
+
+    const bookId = book._id;
+
+    this.isProcessingId.set(bookId);
+
+    this.bookService
+      .updateBook(bookId, { status: 'available', borrower: '', dueDate: null })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated: Book) => {
+          this.isProcessingId.set(null);
+          this.books.update((current: Book[]) =>
+            current.map((entry: Book) => (entry._id === updated._id ? updated : entry)),
+          );
+          this.successMessage.set(`"${updated.title}" is back on the shelf.`);
+        },
+        error: (error: unknown) => {
+          this.isProcessingId.set(null);
+          this.errorMessage.set(this.describeError(error));
+        },
+      });
+  }
+
   protected requestDelete(book: Book): void {
-    if (this.isDeleting()) {
+    if (this.isDeleting() || this.isProcessingId() !== null) {
       return;
     }
 
