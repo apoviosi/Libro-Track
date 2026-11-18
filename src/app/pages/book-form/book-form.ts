@@ -1,7 +1,12 @@
-/**
- * Name: Deelan Glear R. David
- * Date: 2026-11-18
- * Title: Reactive create/edit book form component
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 18, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+/*
+ * Reactive form logic originally implemented by Deelan Glear R. David (2026-11-18).
+ * Catppuccin Mocha restyling and save feedback banners by Aquino, Edrel P.
  */
 
 import { HttpErrorResponse } from '@angular/common/http';
@@ -31,6 +36,7 @@ const nonWhitespaceValidator = (control: AbstractControl): ValidationErrors | nu
 @Component({
   selector: 'app-book-form',
   imports: [ReactiveFormsModule, RouterLink],
+  styleUrl: './book-form.css',
   templateUrl: './book-form.html',
 })
 export class BookForm implements OnInit {
@@ -61,9 +67,14 @@ export class BookForm implements OnInit {
   protected readonly loadFailed = signal(false);
   protected readonly isSaving = signal(false);
   protected readonly errorMessage = signal('');
+  protected readonly successMessage = signal('');
   protected readonly isEditMode = computed(() => this.bookId() !== null);
 
+  private redirectTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor() {
+    this.destroyRef.onDestroy(() => this.clearRedirectTimer());
+
     this.form.controls.status.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((status: BookStatus) => {
@@ -114,6 +125,7 @@ export class BookForm implements OnInit {
     }
 
     this.errorMessage.set('');
+    this.successMessage.set('');
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -141,13 +153,27 @@ export class BookForm implements OnInit {
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isSaving.set(false);
-        void this.router.navigate(['/books']);
+        this.successMessage.set(
+          this.isEditMode()
+            ? 'Book updated successfully. Redirecting to the catalog…'
+            : 'Book saved successfully. Redirecting to the catalog…',
+        );
+        this.redirectTimer = setTimeout(() => {
+          void this.router.navigate(['/books']);
+        }, 1200);
       },
       error: (error: unknown) => {
         this.isSaving.set(false);
         this.errorMessage.set(this.describeError(error));
       },
     });
+  }
+
+  private clearRedirectTimer(): void {
+    if (this.redirectTimer !== null) {
+      clearTimeout(this.redirectTimer);
+      this.redirectTimer = null;
+    }
   }
 
   private applyLoanValidators(status: BookStatus): void {
