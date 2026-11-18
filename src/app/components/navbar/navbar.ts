@@ -10,8 +10,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, RouterLinkActive],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css',
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.css',
 })
 export class NavbarComponent {
   protected readonly isOpen = signal(false);
