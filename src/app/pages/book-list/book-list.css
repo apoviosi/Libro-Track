@@ -188,7 +188,7 @@
 }
 
 .meta-label {
-  color: var(--ctp-overlay0);
+  color: var(--ctp-subtext0);
   font-size: 0.7rem;
   letter-spacing: 0.05em;
   margin-right: 0.5rem;
@@ -197,17 +197,17 @@
 
 .book-actions {
   border-top: 1px solid var(--ctp-surface1);
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 0.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: auto;
   padding-top: 0.9rem;
 }
 
 .book-actions .btn {
-  flex: 1 1 30%;
   font-size: 0.9rem;
-  padding: 0.5rem 0.75rem;
+  line-height: 1.2;
+  padding: 0.5rem;
 }
 
 .empty-state {

@@ -49,6 +49,10 @@
   font-weight: 600;
 }
 
+.req-mark {
+  color: var(--ctp-red);
+}
+
 .form-input {
   background-color: var(--ctp-mantle);
   border: 1px solid var(--ctp-surface1);
@@ -61,7 +65,6 @@
 
 .form-input:focus {
   border-color: var(--ctp-lavender);
-  outline: none;
 }
 
 .form-input[aria-invalid='true'] {

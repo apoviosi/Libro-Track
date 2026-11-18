@@ -10,6 +10,8 @@
       <p class="catalog-subtitle">
         @if (isLoading()) {
           Retrieving records from the archive…
+        } @else if (loadFailed()) {
+          Catalog unavailable.
         } @else {
           {{ books().length }} {{ books().length === 1 ? 'volume' : 'volumes' }} currently indexed
         }
