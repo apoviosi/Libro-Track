@@ -74,6 +74,24 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/books/summary - return dashboard counts grouped by status
+// Registered before /:id so "summary" is not parsed as an ObjectId.
+router.get('/summary', async (req, res) => {
+  try {
+    const [total, available, borrowed, overdue] = await Promise.all([
+      Book.countDocuments({}),
+      Book.countDocuments({ status: 'available' }),
+      Book.countDocuments({ status: 'borrowed' }),
+      Book.countDocuments({ status: 'overdue' })
+    ]);
+
+    res.status(200).json({ total, available, borrowed, overdue });
+  } catch (error) {
+    console.error('Failed to fetch book summary:', error.message);
+    res.status(500).json({ message: 'Failed to fetch book summary', error: error.message });
+  }
+});
+
 // GET /api/books/:id - return a single book by its MongoDB ID
 router.get('/:id', async (req, res) => {
   try {
