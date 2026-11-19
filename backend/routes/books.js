@@ -4,10 +4,24 @@ const Book = require('../models/Book');
 
 const router = express.Router();
 
-// GET /api/books - return all book records
+const SEARCH_FIELDS = ['title', 'author', 'isbn', 'borrower'];
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// GET /api/books - return book records with optional search
 router.get('/', async (req, res) => {
   try {
-    const books = await Book.find();
+    const filter = {};
+
+    const rawSearch = req.query.search !== undefined ? req.query.search : req.query.q;
+    const search = typeof rawSearch === 'string' ? rawSearch.trim() : '';
+
+    if (search) {
+      const pattern = { $regex: escapeRegex(search), $options: 'i' };
+      filter.$or = SEARCH_FIELDS.map((field) => ({ [field]: pattern }));
+    }
+
+    const books = await Book.find(filter);
     res.status(200).json(books);
   } catch (error) {
     console.error('Failed to fetch books:', error.message);
