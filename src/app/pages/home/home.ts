@@ -1,3 +1,9 @@
+/**
+ * Name: Deelan Glear R. David
+ * Date: 2026-11-19
+ * Title: Reactive dashboard summary counts
+ */
+
 /*
  * Name: Aquino, Edrel P.
  * Date: November 18, 2026
@@ -11,7 +17,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Book } from '../../models/book.model';
 import { BookService } from '../../services/book.service';
-import { daysOverdue, daysUntilDue } from '../../utils/due-date';
+import { getDaysOverdue, getEffectiveStatus, getSummaryCounts } from '../../utils/book-status';
+import { daysUntilDue } from '../../utils/due-date';
 
 interface DueEntry {
   book: Book;
@@ -35,25 +42,19 @@ export class Home {
   protected readonly successMessage = signal('');
   protected readonly isProcessingId = signal<string | null>(null);
 
-  protected readonly counts = computed(() => {
-    const list = this.books();
-
-    return {
-      total: list.length,
-      available: list.filter((book: Book) => book.status === 'available').length,
-      borrowed: list.filter((book: Book) => book.status === 'borrowed').length,
-      overdue: list.filter((book: Book) => book.status === 'overdue').length,
-    };
-  });
+  protected readonly counts = computed(() => getSummaryCounts(this.books()));
 
   protected readonly dueWatch = computed<{ overdue: DueEntry[]; dueSoon: DueEntry[] }>(() => {
     const overdue: DueEntry[] = [];
     const dueSoon: DueEntry[] = [];
+    const now = new Date();
 
     for (const book of this.books()) {
-      if (book.status === 'overdue') {
-        overdue.push({ book, days: daysOverdue(book.dueDate) ?? 1 });
-      } else if (book.status === 'borrowed') {
+      const status = getEffectiveStatus(book, now);
+
+      if (status === 'overdue') {
+        overdue.push({ book, days: Math.max(1, getDaysOverdue(book.dueDate, now)) });
+      } else if (status === 'borrowed') {
         const days = daysUntilDue(book.dueDate);
 
         if (days !== null && days <= 7) {
