@@ -5,10 +5,11 @@ const Book = require('../models/Book');
 const router = express.Router();
 
 const SEARCH_FIELDS = ['title', 'author', 'isbn', 'borrower'];
+const STATUS_VALUES = ['available', 'borrowed', 'overdue'];
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// GET /api/books - return book records with optional search
+// GET /api/books - return book records with optional search and status filters
 router.get('/', async (req, res) => {
   try {
     const filter = {};
@@ -19,6 +20,20 @@ router.get('/', async (req, res) => {
     if (search) {
       const pattern = { $regex: escapeRegex(search), $options: 'i' };
       filter.$or = SEARCH_FIELDS.map((field) => ({ [field]: pattern }));
+    }
+
+    if (typeof req.query.status === 'string') {
+      const status = req.query.status.trim().toLowerCase();
+
+      if (status && status !== 'all') {
+        if (!STATUS_VALUES.includes(status)) {
+          return res.status(400).json({
+            message: `Invalid status filter. Allowed values: ${STATUS_VALUES.join(', ')}`
+          });
+        }
+
+        filter.status = status;
+      }
     }
 
     const books = await Book.find(filter);
