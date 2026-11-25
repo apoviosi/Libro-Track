@@ -4,15 +4,14 @@
  * Assignment: CSAPPD1 Final Project - LibroTrack
  */
 
-import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { BookCardComponent } from '../../components/book-card/book-card';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
 import { Book, BookStatus } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
-import { daysOverdue } from '../../utils/due-date';
 
 type StatusFilter = 'all' | BookStatus;
 
@@ -21,7 +20,7 @@ const isBookStatus = (value: string | undefined): value is BookStatus =>
 
 @Component({
   selector: 'app-book-list',
-  imports: [ConfirmDialogComponent, DatePipe, RouterLink],
+  imports: [BookCardComponent, ConfirmDialogComponent, RouterLink],
   templateUrl: './book-list.html',
   styleUrl: './book-list.css',
 })
@@ -61,6 +60,8 @@ export class BookList {
     };
   });
 
+  protected readonly hasAnyBooks = computed(() => this.books().length > 0);
+
   protected readonly filteredBooks = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
     const status = this.activeStatus();
@@ -81,8 +82,6 @@ export class BookList {
       );
     });
   });
-
-  protected readonly hasAnyBooks = computed(() => this.books().length > 0);
 
   protected readonly deletePrompt = computed(() => {
     const book = this.bookToDelete();
@@ -125,12 +124,6 @@ export class BookList {
   protected dismissFeedback(): void {
     this.successMessage.set('');
     this.errorMessage.set('');
-  }
-
-  protected overdueLabel(book: Book): string {
-    const days = daysOverdue(book.dueDate) ?? 1;
-
-    return `${days} ${days === 1 ? 'day' : 'days'} overdue`;
   }
 
   protected returnBook(book: Book): void {
