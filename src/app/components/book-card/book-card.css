@@ -1,0 +1,165 @@
+/*
+ * Name: Aquino, Edrel P.
+ * Date: November 25, 2026
+ * Assignment: CSAPPD1 Final Project - LibroTrack
+ */
+
+.book-card {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ctp-crust) 55%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.book-card:hover {
+  border-color: var(--ctp-surface2);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--ctp-crust) 65%, transparent);
+  transform: translateY(-2px);
+}
+
+.book-card-busy {
+  opacity: 0.85;
+}
+
+.book-card-head {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  min-height: 1.75rem;
+}
+
+.book-title {
+  color: var(--ctp-text);
+  font-size: 1.2rem;
+  line-height: 1.25;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.book-author {
+  color: var(--ctp-subtext1);
+  font-family: Georgia, 'Liberation Serif', 'DejaVu Serif', serif;
+  font-style: italic;
+  margin: 0;
+}
+
+.book-isbn {
+  color: var(--ctp-subtext0);
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.loan-meta {
+  background-color: var(--ctp-mantle);
+  border-radius: 0.625rem;
+  display: grid;
+  gap: 0.3rem;
+  margin-top: auto;
+  min-height: 3.45rem;
+  padding: 0.6rem 0.75rem;
+}
+
+.loan-meta p {
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.meta-label {
+  color: var(--ctp-subtext0);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  margin-right: 0.5rem;
+  text-transform: uppercase;
+}
+
+.meta-ready {
+  color: var(--ctp-subtext0);
+}
+
+.meta-ready-sub {
+  color: var(--ctp-overlay0);
+}
+
+.book-footer {
+  align-items: center;
+  border-top: 1px solid var(--ctp-surface1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+}
+
+.btn-action {
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 0.7rem;
+  text-decoration: none;
+}
+
+.book-actions {
+  align-items: center;
+  border-left: 1px solid var(--ctp-surface1);
+  display: flex;
+  gap: 0.35rem;
+  padding-left: 0.6rem;
+}
+
+.book-actions .btn {
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: var(--ctp-lavender);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.45rem;
+}
+
+.book-actions .btn:hover {
+  background-color: var(--ctp-mantle);
+  border-color: var(--ctp-surface1);
+}
+
+.book-actions .btn-danger-quiet {
+  color: var(--ctp-red);
+}
+
+.book-actions .btn-danger-quiet:hover {
+  border-color: var(--ctp-red);
+}
+
+@media (max-width: 640px) {
+  .book-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .book-actions {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book-card {
+    transition: none;
+  }
+
+  .book-card:hover {
+    transform: none;
+  }
+}

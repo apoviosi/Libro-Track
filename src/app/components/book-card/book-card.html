@@ -1,0 +1,71 @@
+<!--
+  Name: Aquino, Edrel P.
+  Date: November 25, 2026
+  Assignment: CSAPPD1 Final Project - LibroTrack
+-->
+<article class="book-card" [class.book-card-busy]="busy()">
+  <div class="book-card-head">
+    <span
+      class="status-badge"
+      [class.status-available]="book().status === 'available'"
+      [class.status-borrowed]="book().status === 'borrowed'"
+      [class.status-overdue]="book().status === 'overdue'"
+      [style.color]="statusAccent()"
+      [style.border-color]="statusAccent()"
+      [style.background-color]="statusTint()"
+    >
+      {{ statusLabel() }}
+    </span>
+  </div>
+
+  <h2 class="book-title" [title]="book().title">{{ book().title }}</h2>
+  <p class="book-author">{{ book().author }}</p>
+  <p class="book-isbn">ISBN {{ book().isbn }}</p>
+
+  <div class="loan-meta">
+    @if (book().status !== 'available') {
+      <p><span class="meta-label">Borrower</span>{{ book().borrower }}</p>
+      <p>
+        <span class="meta-label">Due</span>
+        <span [class.due-overdue]="book().status === 'overdue'">{{
+          book().dueDate | date: 'MMM d, y'
+        }}</span>
+        @if (book().status === 'overdue') {
+          <span class="overdue-note">{{ overdueLabel() }}</span>
+        }
+      </p>
+    } @else {
+      <p class="meta-ready">Ready for checkout</p>
+      <p class="meta-ready meta-ready-sub">No active loan</p>
+    }
+  </div>
+
+  <div class="book-footer">
+    @if (book().status === 'available') {
+      <a
+        class="btn btn-primary btn-action"
+        [routerLink]="['/lend']"
+        [queryParams]="{ bookId: book()._id }"
+      >
+        Lend
+      </a>
+    } @else {
+      <button
+        class="btn btn-return btn-action"
+        type="button"
+        [disabled]="busy()"
+        (click)="onReturn()"
+      >
+        {{ busy() ? 'Returning…' : 'Return' }}
+      </button>
+    }
+
+    <div class="book-actions">
+      <a class="btn" [routerLink]="['/books', book()._id]">View</a>
+      <a class="btn" [routerLink]="['/books', book()._id, 'edit']">Edit</a>
+      <button class="btn btn-danger-quiet" type="button" [disabled]="busy()" (click)="onDelete()">
+        Delete
+      </button>
+    </div>
+  </div>
+</article>
