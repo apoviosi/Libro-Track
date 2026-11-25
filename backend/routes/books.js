@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Book = require('../models/Book');
-const { parseBookQuery } = require('./books.query');
+const { parseBookQuery, buildStatusCondition } = require('./books.query');
 
 const router = express.Router();
 
@@ -22,15 +22,16 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/books/summary - return dashboard counts grouped by status
+// GET /api/books/summary - return dashboard counts grouped by effective status
 // Registered before /:id so "summary" is not parsed as an ObjectId.
 router.get('/summary', async (req, res) => {
   try {
+    const now = new Date();
     const [total, available, borrowed, overdue] = await Promise.all([
       Book.countDocuments({}),
-      Book.countDocuments({ status: 'available' }),
-      Book.countDocuments({ status: 'borrowed' }),
-      Book.countDocuments({ status: 'overdue' })
+      Book.countDocuments(buildStatusCondition('available', now)),
+      Book.countDocuments(buildStatusCondition('borrowed', now)),
+      Book.countDocuments(buildStatusCondition('overdue', now))
     ]);
 
     res.status(200).json({ total, available, borrowed, overdue });

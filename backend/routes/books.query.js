@@ -50,7 +50,28 @@ const buildSearchCondition = (search) => {
   };
 };
 
-const buildStatusCondition = (status) => ({ status });
+/**
+ * Build the MongoDB condition for an effective status.
+ * A borrowed book whose due date has passed is treated as overdue, matching
+ * the frontend and the /summary endpoint, rather than trusting the stored
+ * status field alone.
+ */
+const buildStatusCondition = (status, now = new Date()) => {
+  if (status === 'borrowed') {
+    return {
+      status: 'borrowed',
+      $or: [{ dueDate: null }, { dueDate: { $gte: now } }]
+    };
+  }
+
+  if (status === 'overdue') {
+    return {
+      $or: [{ status: 'overdue' }, { status: 'borrowed', dueDate: { $lt: now } }]
+    };
+  }
+
+  return { status };
+};
 
 const parseOrder = (value) => {
   if (value === undefined) {
@@ -114,7 +135,7 @@ const buildSort = (rawSort, orderDirection) => {
  * Parse and validate the query string for GET /api/books.
  * Returns { filter, sort } on success or { error } when a parameter is invalid.
  */
-const parseBookQuery = (query = {}) => {
+const parseBookQuery = (query = {}, now = new Date()) => {
   const searchParam = readStringParam(query, 'search');
 
   if (searchParam.error) {
@@ -162,7 +183,7 @@ const parseBookQuery = (query = {}) => {
       };
     }
 
-    conditions.push(buildStatusCondition(status));
+    conditions.push(buildStatusCondition(status, now));
   }
 
   let filter = {};
