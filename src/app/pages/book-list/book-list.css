@@ -137,10 +137,25 @@
 .book-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+}
+
+@media (max-width: 900px) {
+  .status-pills {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 640px) {
+  .catalog-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .catalog-header .btn {
+    text-align: center;
+  }
+
   .toolbar-search {
     flex-basis: 100%;
   }
@@ -154,6 +169,15 @@
   }
 
   .status-pills {
-    margin-left: 0;
+    gap: 0.35rem;
+  }
+
+  .pill {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .book-grid {
+    grid-template-columns: 1fr;
   }
 }
