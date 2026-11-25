@@ -1,72 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Book = require('../models/Book');
+const { parseBookQuery } = require('./books.query');
 
 const router = express.Router();
-
-const SEARCH_FIELDS = ['title', 'author', 'isbn', 'borrower'];
-const STATUS_VALUES = ['available', 'borrowed', 'overdue'];
-const SORT_FIELDS = ['title', 'author', 'isbn', 'status', 'borrower', 'dueDate', 'createdAt'];
-
-const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // GET /api/books - return book records with optional search, status, and sorting
 router.get('/', async (req, res) => {
   try {
-    const filter = {};
+    const parsed = parseBookQuery(req.query);
 
-    const rawSearch = req.query.search !== undefined ? req.query.search : req.query.q;
-    const search = typeof rawSearch === 'string' ? rawSearch.trim() : '';
-
-    if (search) {
-      const pattern = { $regex: escapeRegex(search), $options: 'i' };
-      filter.$or = SEARCH_FIELDS.map((field) => ({ [field]: pattern }));
+    if (parsed.error) {
+      return res.status(400).json({ message: parsed.error });
     }
 
-    if (typeof req.query.status === 'string') {
-      const status = req.query.status.trim().toLowerCase();
-
-      if (status && status !== 'all') {
-        if (!STATUS_VALUES.includes(status)) {
-          return res.status(400).json({
-            message: `Invalid status filter. Allowed values: ${STATUS_VALUES.join(', ')}`
-          });
-        }
-
-        filter.status = status;
-      }
-    }
-
-    const rawSort = typeof req.query.sort === 'string' ? req.query.sort.trim() : '';
-    let sortField = 'createdAt';
-    let sortDirection = -1;
-
-    if (rawSort) {
-      const inlineDescending = rawSort.startsWith('-');
-      sortField = inlineDescending ? rawSort.slice(1).trim() : rawSort;
-
-      if (!sortField || !SORT_FIELDS.includes(sortField)) {
-        return res.status(400).json({
-          message: `Invalid sort field. Allowed values: ${SORT_FIELDS.join(', ')}`
-        });
-      }
-
-      sortDirection = inlineDescending ? -1 : 1;
-
-      if (typeof req.query.order === 'string' && req.query.order.trim()) {
-        const order = req.query.order.trim().toLowerCase();
-
-        if (order !== 'asc' && order !== 'desc') {
-          return res.status(400).json({
-            message: "Invalid order. Allowed values: 'asc', 'desc'"
-          });
-        }
-
-        sortDirection = order === 'desc' ? -1 : 1;
-      }
-    }
-
-    const books = await Book.find(filter).sort({ [sortField]: sortDirection });
+    const books = await Book.find(parsed.filter).sort(parsed.sort);
     res.status(200).json(books);
   } catch (error) {
     console.error('Failed to fetch books:', error.message);
