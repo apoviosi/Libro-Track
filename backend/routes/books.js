@@ -1,17 +1,43 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Book = require('../models/Book');
+const { parseBookQuery, buildStatusCondition } = require('./books.query');
 
 const router = express.Router();
 
-// GET /api/books - return all book records
+// GET /api/books - return book records with optional search, status, and sorting
 router.get('/', async (req, res) => {
   try {
-    const books = await Book.find();
+    const parsed = parseBookQuery(req.query);
+
+    if (parsed.error) {
+      return res.status(400).json({ message: parsed.error });
+    }
+
+    const books = await Book.find(parsed.filter).sort(parsed.sort);
     res.status(200).json(books);
   } catch (error) {
     console.error('Failed to fetch books:', error.message);
     res.status(500).json({ message: 'Failed to fetch books', error: error.message });
+  }
+});
+
+// GET /api/books/summary - return dashboard counts grouped by effective status
+// Registered before /:id so "summary" is not parsed as an ObjectId.
+router.get('/summary', async (req, res) => {
+  try {
+    const now = new Date();
+    const [total, available, borrowed, overdue] = await Promise.all([
+      Book.countDocuments({}),
+      Book.countDocuments(buildStatusCondition('available', now)),
+      Book.countDocuments(buildStatusCondition('borrowed', now)),
+      Book.countDocuments(buildStatusCondition('overdue', now))
+    ]);
+
+    res.status(200).json({ total, available, borrowed, overdue });
+  } catch (error) {
+    console.error('Failed to fetch book summary:', error.message);
+    res.status(500).json({ message: 'Failed to fetch book summary', error: error.message });
   }
 });
 
