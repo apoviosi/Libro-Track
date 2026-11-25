@@ -13,7 +13,7 @@
         } @else if (loadFailed()) {
           Catalog unavailable.
         } @else {
-          {{ filteredBooks().length }} of {{ books().length }}
+          {{ visibleBooks().length }} of {{ books().length }}
           {{ books().length === 1 ? 'volume' : 'volumes' }} on the shelves
         }
       </p>
@@ -67,6 +67,21 @@
         [value]="searchQuery()"
         (input)="onSearch($event)"
       />
+      <label class="toolbar-sort">
+        <span class="toolbar-sort-label">Sort</span>
+        <select
+          class="toolbar-sort-select"
+          aria-label="Sort the catalog"
+          [value]="sortBy()"
+          (change)="onSortChange($event)"
+        >
+          @for (option of sortOptions; track option.value) {
+            <option [value]="option.value" [selected]="sortBy() === option.value">
+              {{ option.label }}
+            </option>
+          }
+        </select>
+      </label>
       <div class="status-pills" role="group" aria-label="Filter by loan status">
         <button
           type="button"
@@ -104,7 +119,7 @@
     </div>
 
     <div class="book-grid">
-      @for (book of filteredBooks(); track book._id) {
+      @for (book of visibleBooks(); track book._id) {
         <app-book-card
           [book]="book"
           [busy]="isProcessingId() === book._id"

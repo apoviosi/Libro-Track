@@ -60,6 +60,35 @@
   border-color: var(--ctp-lavender);
 }
 
+.toolbar-sort {
+  align-items: center;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.toolbar-sort-label {
+  color: var(--ctp-subtext0);
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.toolbar-sort-select {
+  background-color: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 0.5rem;
+  color: var(--ctp-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.toolbar-sort-select:focus {
+  border-color: var(--ctp-lavender);
+}
+
 .status-pills {
   display: flex;
   flex-wrap: wrap;
@@ -114,6 +143,14 @@
 @media (max-width: 640px) {
   .toolbar-search {
     flex-basis: 100%;
+  }
+
+  .toolbar-sort {
+    flex: 1 1 100%;
+  }
+
+  .toolbar-sort-select {
+    flex: 1;
   }
 
   .status-pills {

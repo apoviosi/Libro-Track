@@ -14,9 +14,24 @@ import { Book, BookStatus } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
 
 type StatusFilter = 'all' | BookStatus;
+type SortOption = 'title-asc' | 'title-desc' | 'author-asc' | 'status' | 'due-date';
 
 const isBookStatus = (value: string | undefined): value is BookStatus =>
   value === 'available' || value === 'borrowed' || value === 'overdue';
+
+const STATUS_SORT_ORDER: Record<BookStatus, number> = {
+  overdue: 0,
+  borrowed: 1,
+  available: 2,
+};
+
+const SORT_OPTIONS: ReadonlyArray<{ value: SortOption; label: string }> = [
+  { value: 'title-asc', label: 'Title (A–Z)' },
+  { value: 'title-desc', label: 'Title (Z–A)' },
+  { value: 'author-asc', label: 'Author (A–Z)' },
+  { value: 'status', label: 'Status (Overdue first)' },
+  { value: 'due-date', label: 'Due date (Soonest first)' },
+];
 
 @Component({
   selector: 'app-book-list',
@@ -39,6 +54,8 @@ export class BookList {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
   protected readonly searchQuery = signal('');
+  protected readonly sortBy = signal<SortOption>('title-asc');
+  protected readonly sortOptions = SORT_OPTIONS;
   protected readonly bookToDelete = signal<Book | null>(null);
   protected readonly isDeleting = signal(false);
   protected readonly isProcessingId = signal<string | null>(null);
@@ -62,11 +79,11 @@ export class BookList {
 
   protected readonly hasAnyBooks = computed(() => this.books().length > 0);
 
-  protected readonly filteredBooks = computed(() => {
+  protected readonly visibleBooks = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
     const status = this.activeStatus();
-
-    return this.books().filter((book: Book) => {
+    const sortBy = this.sortBy();
+    const matching = this.books().filter((book: Book) => {
       if (status !== 'all' && book.status !== status) {
         return false;
       }
@@ -80,6 +97,24 @@ export class BookList {
         book.author.toLowerCase().includes(query) ||
         book.isbn.toLowerCase().includes(query)
       );
+    });
+
+    return matching.sort((a: Book, b: Book) => {
+      switch (sortBy) {
+        case 'title-asc':
+          return a.title.localeCompare(b.title);
+        case 'title-desc':
+          return b.title.localeCompare(a.title);
+        case 'author-asc':
+          return a.author.localeCompare(b.author) || a.title.localeCompare(b.title);
+        case 'status':
+          return (
+            STATUS_SORT_ORDER[a.status] - STATUS_SORT_ORDER[b.status] ||
+            a.title.localeCompare(b.title)
+          );
+        case 'due-date':
+          return (a.dueDate ?? '9999-12-31').localeCompare(b.dueDate ?? '9999-12-31');
+      }
     });
   });
 
@@ -100,6 +135,10 @@ export class BookList {
 
   protected onSearch(event: Event): void {
     this.searchQuery.set((event.target as HTMLInputElement).value);
+  }
+
+  protected onSortChange(event: Event): void {
+    this.sortBy.set((event.target as HTMLSelectElement).value as SortOption);
   }
 
   protected onStatusFilter(next: StatusFilter): void {
