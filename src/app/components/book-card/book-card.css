@@ -4,12 +4,17 @@
  * Assignment: CSAPPD1 Final Project - LibroTrack
  */
 
+:host {
+  display: flex;
+}
+
 .book-card {
   background-color: var(--ctp-surface0);
   border: 1px solid var(--ctp-surface1);
   border-radius: 1rem;
   box-shadow: 0 8px 24px color-mix(in srgb, var(--ctp-crust) 55%, transparent);
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0.5rem;
   padding: 1.25rem;
