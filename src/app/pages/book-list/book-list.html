@@ -72,11 +72,11 @@
         <select
           class="toolbar-sort-select"
           aria-label="Sort the catalog"
-          [value]="sortBy()"
+          [value]="activeSort()"
           (change)="onSortChange($event)"
         >
           @for (option of sortOptions; track option.value) {
-            <option [value]="option.value" [selected]="sortBy() === option.value">
+            <option [value]="option.value" [selected]="activeSort() === option.value">
               {{ option.label }}
             </option>
           }

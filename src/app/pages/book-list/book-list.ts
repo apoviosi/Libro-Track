@@ -38,6 +38,8 @@ export class BookList {
 
   /** Active status filter, bound from the ?status= query parameter. */
   readonly status = input<string>();
+  /** Active sort order, bound from the ?sort= query parameter. */
+  readonly sort = input<string>();
 
   protected readonly books = signal<Book[]>([]);
   protected readonly isLoading = signal(true);
@@ -45,13 +47,12 @@ export class BookList {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
   protected readonly searchQuery = signal('');
-  protected readonly sortBy = signal<BookSortOption>('recent');
   protected readonly sortOptions = BOOK_SORT_OPTIONS;
   protected readonly bookToDelete = signal<Book | null>(null);
   protected readonly isDeleting = signal(false);
   protected readonly isProcessingId = signal<string | null>(null);
 
-  protected readonly activeSort = computed<BookSortOption>(() => this.sortBy());
+  protected readonly activeSort = computed<BookSortOption>(() => parseBookSortOption(this.sort()));
 
   protected readonly activeStatus = computed<StatusFilter>(() => {
     const status = this.status();
@@ -114,13 +115,20 @@ export class BookList {
   }
 
   protected onSortChange(event: Event): void {
-    this.sortBy.set(parseBookSortOption((event.target as HTMLSelectElement).value));
+    const next = parseBookSortOption((event.target as HTMLSelectElement).value);
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { sort: next === 'recent' ? null : next },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected onStatusFilter(next: StatusFilter): void {
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: next === 'all' ? { status: null } : { status: next },
+      queryParamsHandling: 'merge',
     });
   }
 
