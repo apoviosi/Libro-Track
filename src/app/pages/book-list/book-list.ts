@@ -1,7 +1,7 @@
-/*
- * Name: Aquino, Edrel P.
- * Date: November 18, 2026
- * Assignment: CSAPPD1 Final Project - LibroTrack
+/**
+ * Name: Deelan Glear R. David
+ * Date: 2026-11-26
+ * Title: Book catalog list page
  */
 
 import { DatePipe } from '@angular/common';
@@ -12,7 +12,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
 import { Book, BookStatus } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
-import { daysOverdue } from '../../utils/due-date';
+import { getDaysOverdue, getEffectiveStatus } from '../../utils/book-status';
 
 type StatusFilter = 'all' | BookStatus;
 
@@ -50,15 +50,20 @@ export class BookList {
     return isBookStatus(status) ? status : 'all';
   });
 
-  protected readonly statusCounts = computed(() => {
+  protected readonly statusCounts = computed<Record<StatusFilter, number>>(() => {
     const list = this.books();
-
-    return {
+    const counts: Record<StatusFilter, number> = {
       all: list.length,
-      available: list.filter((book: Book) => book.status === 'available').length,
-      borrowed: list.filter((book: Book) => book.status === 'borrowed').length,
-      overdue: list.filter((book: Book) => book.status === 'overdue').length,
+      available: 0,
+      borrowed: 0,
+      overdue: 0,
     };
+
+    for (const book of list) {
+      counts[getEffectiveStatus(book)] += 1;
+    }
+
+    return counts;
   });
 
   protected readonly filteredBooks = computed(() => {
@@ -66,7 +71,7 @@ export class BookList {
     const status = this.activeStatus();
 
     return this.books().filter((book: Book) => {
-      if (status !== 'all' && book.status !== status) {
+      if (status !== 'all' && getEffectiveStatus(book) !== status) {
         return false;
       }
 
@@ -127,8 +132,12 @@ export class BookList {
     this.errorMessage.set('');
   }
 
+  protected effectiveStatus(book: Book): BookStatus {
+    return getEffectiveStatus(book);
+  }
+
   protected overdueLabel(book: Book): string {
-    const days = daysOverdue(book.dueDate) ?? 1;
+    const days = Math.max(1, getDaysOverdue(book.dueDate));
 
     return `${days} ${days === 1 ? 'day' : 'days'} overdue`;
   }

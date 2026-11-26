@@ -1,7 +1,7 @@
-/*
- * Name: Aquino, Edrel P.
- * Date: November 18, 2026
- * Assignment: CSAPPD1 Final Project - LibroTrack
+/**
+ * Name: Deelan Glear R. David
+ * Date: 2026-11-26
+ * Title: Due date utilities
  */
 
 const MILLISECONDS_PER_DAY = 86_400_000;
@@ -14,19 +14,6 @@ const toDate = (value: string | null | undefined): Date | null => {
   const date = new Date(value);
 
   return Number.isNaN(date.getTime()) ? null : date;
-};
-
-/** Whole days past the given due date, or null when the loan is not yet past due. */
-export const daysOverdue = (dueDate: string | null | undefined): number | null => {
-  const due = toDate(dueDate);
-
-  if (!due) {
-    return null;
-  }
-
-  const elapsedDays = Math.floor((Date.now() - due.getTime()) / MILLISECONDS_PER_DAY);
-
-  return elapsedDays > 0 ? elapsedDays : null;
 };
 
 /** Whole days remaining until the given due date, or null when the due date has passed. */

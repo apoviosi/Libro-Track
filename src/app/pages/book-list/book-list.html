@@ -1,7 +1,7 @@
 <!--
-  Name: Aquino, Edrel P.
-  Date: November 18, 2026
-  Assignment: CSAPPD1 Final Project - LibroTrack
+  Name: Deelan Glear R. David
+  Date: 2026-11-26
+  Title: Book catalog list page
 -->
 <section class="catalog-page">
   <header class="catalog-header">
@@ -105,15 +105,16 @@
 
     <div class="book-grid">
       @for (book of filteredBooks(); track book._id) {
+        @let status = effectiveStatus(book);
         <article class="book-card">
           <div class="book-card-head">
             <span
               class="status-badge"
-              [class.status-available]="book.status === 'available'"
-              [class.status-borrowed]="book.status === 'borrowed'"
-              [class.status-overdue]="book.status === 'overdue'"
+              [class.status-available]="status === 'available'"
+              [class.status-borrowed]="status === 'borrowed'"
+              [class.status-overdue]="status === 'overdue'"
             >
-              {{ book.status }}
+              {{ status }}
             </span>
           </div>
           <h2 class="book-title" [title]="book.title">{{ book.title }}</h2>
@@ -121,14 +122,14 @@
           <p class="book-isbn">ISBN {{ book.isbn }}</p>
 
           <div class="loan-meta">
-            @if (book.status !== 'available') {
+            @if (status !== 'available') {
               <p><span class="meta-label">Borrower</span>{{ book.borrower }}</p>
               <p>
                 <span class="meta-label">Due</span>
-                <span [class.due-overdue]="book.status === 'overdue'">{{
+                <span [class.due-overdue]="status === 'overdue'">{{
                   book.dueDate | date: 'MMM d, y'
                 }}</span>
-                @if (book.status === 'overdue') {
+                @if (status === 'overdue') {
                   <span class="overdue-note">{{ overdueLabel(book) }}</span>
                 }
               </p>
@@ -139,7 +140,7 @@
           </div>
 
           <div class="book-footer">
-            @if (book.status === 'available') {
+            @if (status === 'available') {
               <a
                 class="btn btn-primary btn-action"
                 [routerLink]="['/lend']"
