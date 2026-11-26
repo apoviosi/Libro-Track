@@ -1,7 +1,7 @@
-/*
- * Name: Aquino, Edrel P.
- * Date: November 18, 2026
- * Assignment: CSAPPD1 Final Project - LibroTrack
+/**
+ * Name: Deelan Glear R. David
+ * Date: 2026-11-26
+ * Title: Book detail page
  */
 
 import { DatePipe } from '@angular/common';
@@ -19,9 +19,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
-import { Book } from '../../models/book.model';
+import { Book, BookStatus } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
-import { daysOverdue } from '../../utils/due-date';
+import { getDaysOverdue, getEffectiveStatus } from '../../utils/book-status';
 
 @Component({
   selector: 'app-book-detail',
@@ -62,8 +62,12 @@ export class BookDetail {
     });
   }
 
+  protected effectiveStatus(book: Book): BookStatus {
+    return getEffectiveStatus(book);
+  }
+
   protected overdueLabel(book: Book): string {
-    const days = daysOverdue(book.dueDate) ?? 1;
+    const days = Math.max(1, getDaysOverdue(book.dueDate));
 
     return `${days} ${days === 1 ? 'day' : 'days'} overdue`;
   }
