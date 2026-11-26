@@ -4,15 +4,20 @@
  * Assignment: CSAPPD1 Final Project - LibroTrack
  */
 
-import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { BookCardComponent } from '../../components/book-card/book-card';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
 import { Book, BookStatus } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
-import { daysOverdue } from '../../utils/due-date';
+import {
+  BOOK_SORT_OPTIONS,
+  BookSortOption,
+  parseBookSortOption,
+  sortBooks,
+} from '../../utils/book-sort';
 
 type StatusFilter = 'all' | BookStatus;
 
@@ -21,7 +26,7 @@ const isBookStatus = (value: string | undefined): value is BookStatus =>
 
 @Component({
   selector: 'app-book-list',
-  imports: [ConfirmDialogComponent, DatePipe, RouterLink],
+  imports: [BookCardComponent, ConfirmDialogComponent, RouterLink],
   templateUrl: './book-list.html',
   styleUrl: './book-list.css',
 })
@@ -33,6 +38,8 @@ export class BookList {
 
   /** Active status filter, bound from the ?status= query parameter. */
   readonly status = input<string>();
+  /** Active sort order, bound from the ?sort= query parameter. */
+  readonly sort = input<string>();
 
   protected readonly books = signal<Book[]>([]);
   protected readonly isLoading = signal(true);
@@ -40,9 +47,12 @@ export class BookList {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
   protected readonly searchQuery = signal('');
+  protected readonly sortOptions = BOOK_SORT_OPTIONS;
   protected readonly bookToDelete = signal<Book | null>(null);
   protected readonly isDeleting = signal(false);
   protected readonly isProcessingId = signal<string | null>(null);
+
+  protected readonly activeSort = computed<BookSortOption>(() => parseBookSortOption(this.sort()));
 
   protected readonly activeStatus = computed<StatusFilter>(() => {
     const status = this.status();
@@ -61,11 +71,12 @@ export class BookList {
     };
   });
 
-  protected readonly filteredBooks = computed(() => {
+  protected readonly hasAnyBooks = computed(() => this.books().length > 0);
+
+  protected readonly visibleBooks = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
     const status = this.activeStatus();
-
-    return this.books().filter((book: Book) => {
+    const matching = this.books().filter((book: Book) => {
       if (status !== 'all' && book.status !== status) {
         return false;
       }
@@ -80,9 +91,9 @@ export class BookList {
         book.isbn.toLowerCase().includes(query)
       );
     });
-  });
 
-  protected readonly hasAnyBooks = computed(() => this.books().length > 0);
+    return sortBooks(matching, this.activeSort());
+  });
 
   protected readonly deletePrompt = computed(() => {
     const book = this.bookToDelete();
@@ -103,10 +114,21 @@ export class BookList {
     this.searchQuery.set((event.target as HTMLInputElement).value);
   }
 
+  protected onSortChange(event: Event): void {
+    const next = parseBookSortOption((event.target as HTMLSelectElement).value);
+
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { sort: next === 'recent' ? null : next },
+      queryParamsHandling: 'merge',
+    });
+  }
+
   protected onStatusFilter(next: StatusFilter): void {
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: next === 'all' ? { status: null } : { status: next },
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -125,12 +147,6 @@ export class BookList {
   protected dismissFeedback(): void {
     this.successMessage.set('');
     this.errorMessage.set('');
-  }
-
-  protected overdueLabel(book: Book): string {
-    const days = daysOverdue(book.dueDate) ?? 1;
-
-    return `${days} ${days === 1 ? 'day' : 'days'} overdue`;
   }
 
   protected returnBook(book: Book): void {
