@@ -12,26 +12,17 @@ import { BookCardComponent } from '../../components/book-card/book-card';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog';
 import { Book, BookStatus } from '../../models/book.model';
 import { BookService, DeleteBookResponse } from '../../services/book.service';
+import {
+  BOOK_SORT_OPTIONS,
+  BookSortOption,
+  parseBookSortOption,
+  sortBooks,
+} from '../../utils/book-sort';
 
 type StatusFilter = 'all' | BookStatus;
-type SortOption = 'title-asc' | 'title-desc' | 'author-asc' | 'status' | 'due-date';
 
 const isBookStatus = (value: string | undefined): value is BookStatus =>
   value === 'available' || value === 'borrowed' || value === 'overdue';
-
-const STATUS_SORT_ORDER: Record<BookStatus, number> = {
-  overdue: 0,
-  borrowed: 1,
-  available: 2,
-};
-
-const SORT_OPTIONS: ReadonlyArray<{ value: SortOption; label: string }> = [
-  { value: 'title-asc', label: 'Title (A–Z)' },
-  { value: 'title-desc', label: 'Title (Z–A)' },
-  { value: 'author-asc', label: 'Author (A–Z)' },
-  { value: 'status', label: 'Status (Overdue first)' },
-  { value: 'due-date', label: 'Due date (Soonest first)' },
-];
 
 @Component({
   selector: 'app-book-list',
@@ -54,11 +45,13 @@ export class BookList {
   protected readonly successMessage = signal('');
   protected readonly errorMessage = signal('');
   protected readonly searchQuery = signal('');
-  protected readonly sortBy = signal<SortOption>('title-asc');
-  protected readonly sortOptions = SORT_OPTIONS;
+  protected readonly sortBy = signal<BookSortOption>('recent');
+  protected readonly sortOptions = BOOK_SORT_OPTIONS;
   protected readonly bookToDelete = signal<Book | null>(null);
   protected readonly isDeleting = signal(false);
   protected readonly isProcessingId = signal<string | null>(null);
+
+  protected readonly activeSort = computed<BookSortOption>(() => this.sortBy());
 
   protected readonly activeStatus = computed<StatusFilter>(() => {
     const status = this.status();
@@ -82,7 +75,6 @@ export class BookList {
   protected readonly visibleBooks = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
     const status = this.activeStatus();
-    const sortBy = this.sortBy();
     const matching = this.books().filter((book: Book) => {
       if (status !== 'all' && book.status !== status) {
         return false;
@@ -99,23 +91,7 @@ export class BookList {
       );
     });
 
-    return matching.sort((a: Book, b: Book) => {
-      switch (sortBy) {
-        case 'title-asc':
-          return a.title.localeCompare(b.title);
-        case 'title-desc':
-          return b.title.localeCompare(a.title);
-        case 'author-asc':
-          return a.author.localeCompare(b.author) || a.title.localeCompare(b.title);
-        case 'status':
-          return (
-            STATUS_SORT_ORDER[a.status] - STATUS_SORT_ORDER[b.status] ||
-            a.title.localeCompare(b.title)
-          );
-        case 'due-date':
-          return (a.dueDate ?? '9999-12-31').localeCompare(b.dueDate ?? '9999-12-31');
-      }
-    });
+    return sortBooks(matching, this.activeSort());
   });
 
   protected readonly deletePrompt = computed(() => {
@@ -138,7 +114,7 @@ export class BookList {
   }
 
   protected onSortChange(event: Event): void {
-    this.sortBy.set((event.target as HTMLSelectElement).value as SortOption);
+    this.sortBy.set(parseBookSortOption((event.target as HTMLSelectElement).value));
   }
 
   protected onStatusFilter(next: StatusFilter): void {
